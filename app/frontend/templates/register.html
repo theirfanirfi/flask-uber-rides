@@ -1,0 +1,75 @@
+{% extends 'masterlayout.html' %}
+{% block body %}
+      <div class="job_details_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                     <div class="apply_job_form white-bg">
+                        <h4>Register</h4>
+                        <form action="/register" method="post">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        {{form.fullname(placeholder='Full name')}}
+                                        {% if form.fullname.errors %}
+                                        <p style="color:red;"> {{ form.fullname.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                       {{form.email(placeholder='Email')}}
+                                        {% if form.email.errors %}
+                                        <p style="color:red;">{{ form.email.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        {{form.zipcode(placeholder='Zip code')}}
+                                        {% if form.zipcode.errors %}
+                                        <p style="color:red;">{{ form.zipcode.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        {{form.password(placeholder='Password')}}
+                                        {% if form.password.errors %}
+                                        <p style="color:red;">{{ form.password.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        {{form.pass_confirm(placeholder='Confirm password')}}
+                                        {% if form.pass_confirm.errors %}
+                                       <p style="color:red;">{{ form.pass_confirm.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="form-check-inline mx-5">
+                                  <label class="form-check-label">
+                                      {{form.driver_or_pass(class_='form-check-input')}}
+                                      {% if form.driver_or_pass.errors %}
+                                       <p style="color:red;"> {{ form.driver_or_pass.errors[0] }}</p>
+                                        {% endif %}
+<!--                                    <input type="radio" class="form-check-input" name="optradio">Driver-->
+                                 </label>
+                                 </div>
+                                  {{ form.csrf_token }}
+                                <div class="col-md-12">
+                                    <div class="submit_btn">
+<!--                                        <button class="boxed-btn3 w-100 my-3" type="submit">Register</button>-->
+                                        {{form.submit(class_='boxed-btn3 w-100 my-3')}}
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock  %}

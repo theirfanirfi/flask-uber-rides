@@ -1,0 +1,49 @@
+{% extends 'MasterLayouts/masterlayout.html' %}
+{% block body %}
+      <div class="job_details_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                     <div class="apply_job_form white-bg">
+                        <h4>Register</h4>
+                        <form action="#">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        <input type="text" placeholder="User Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        <input type="Email" placeholder="Email">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                        <input type="password" placeholder="password">
+                                    </div>
+                                </div>
+                                <div class="form-check-inline mx-5">
+                                  <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="optradio">Driver
+                                 </label>
+                                 </div>
+                                 <div class="form-check-inline mx-5">
+                                <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="optradio">Passenger
+                                </label>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="submit_btn">
+                                        <button class="boxed-btn3 w-100 my-3" type="submit">Register</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock  %}
