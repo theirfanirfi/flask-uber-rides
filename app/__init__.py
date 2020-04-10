@@ -8,9 +8,7 @@ application = Flask(__name__)
 # secret key
 
 application.config['SECRET_KEY'] = 'mysecret'
-# app.config['ENV'] = 'development'
-# app.config['DEBUG'] = True
-# app.config['TESTING'] = True
+
 # sql alchemy database
 application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/ride.db'
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
