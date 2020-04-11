@@ -16,15 +16,18 @@ class User(db.Model,UserMixin):
     zipcode = db.Column(db.String(100), nullable=False)
     roles = db.Column(db.String(10), default="Passenger")
     profile_image = db.Column(db.String(255), nullable=True)
+    profile_description = db.Column(db.String(255), nullable=True)
+    gender = db.Column(db.Integer, nullable=False)
     passengers = db.relationship('Ride', foreign_keys="[Ride.passenger_id]")
     drivers = db.relationship('Ride', foreign_keys="[Ride.driver_id]")
 
-    def __init__(self, name, email, password, zipcode, roles):
+    def __init__(self, name, email, password, zipcode, roles, gender):
         self.fullname = name
         self.email = email
         self.password = generate_password_hash(password)
         self.zipcode = zipcode
         self.roles = roles
+        self.gender = gender
 
     def check_password(self, passw):
         return check_password_hash(self.password, passw)

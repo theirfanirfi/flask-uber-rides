@@ -51,17 +51,27 @@
 
                                 <div class="form-check-inline mx-5">
                                   <label class="form-check-label">
+                                      <label style="font-weight:bolder;">Gender</label>
+                                      {{form.gender(class_='form-check-input')}}
+                                      {% if form.gender.errors %}
+                                       <p style="color:red;"> {{ form.driver_or_pass.errors[0] }}</p>
+                                        {% endif %}
+                                 </label>
+                                 </div>
+
+                                <div class="form-check-inline mx-5">
+                                  <label class="form-check-label">
+                                      <label style="font-weight:bolder;">Account type</label>
                                       {{form.driver_or_pass(class_='form-check-input')}}
                                       {% if form.driver_or_pass.errors %}
                                        <p style="color:red;"> {{ form.driver_or_pass.errors[0] }}</p>
                                         {% endif %}
-<!--                                    <input type="radio" class="form-check-input" name="optradio">Driver-->
                                  </label>
                                  </div>
                                   {{ form.csrf_token }}
                                 <div class="col-md-12">
                                     <div class="submit_btn">
-<!--                                        <button class="boxed-btn3 w-100 my-3" type="submit">Register</button>-->
+
                                         {{form.submit(class_='boxed-btn3 w-100 my-3')}}
                                     </div>
                                 </div>

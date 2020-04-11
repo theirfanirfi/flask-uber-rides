@@ -1,14 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
+import os
 
 application = Flask(__name__)
 
 # secret key
-
+folder = os.path.join(application.root_path,'static/uploads');
 application.config['SECRET_KEY'] = 'mysecret'
-
+application.config['UPLOAD_FOLDER'] = folder
 # sql alchemy database
 application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/ride.db'
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -16,8 +16,13 @@ application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 login_manager = LoginManager()
+
 login_manager.login_view = 'frontend_blue_print.login'
 login_manager.init_app(application)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 db = SQLAlchemy(application)
 from app.models.models import *

@@ -40,6 +40,7 @@ def login():
 def register():
     form = RegisterationForm()
     role = "Passenger"
+    gender= ""
     if request.method == 'GET':
         return render_template('register.html',form=form)
     elif request.method == 'POST':
@@ -50,7 +51,7 @@ def register():
                 role = "Driver"
 
             user = User(name=form.fullname.data,email=form.email.data,password=form.password.data,
-                        zipcode=form.zipcode.data,roles=role)
+                        zipcode=form.zipcode.data,roles=role,gender=form.gender.data)
             db.session.add(user)
             try:
                 db.session.commit()

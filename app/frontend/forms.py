@@ -1,11 +1,9 @@
-# Form Based Imports
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, RadioField
 from wtforms.validators import DataRequired,Email,EqualTo, Length
 from app.models.models import User
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileAllowed
-# User Based Imports
 from flask_login import current_user
 
 class LoginForm(FlaskForm):
@@ -20,6 +18,7 @@ class RegisterationForm(FlaskForm):
     pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
     zipcode = StringField('text',validators=[DataRequired()])
     driver_or_pass = RadioField('Label', choices=[('1', 'Driver'), ('0', 'Passenger')], validators=[DataRequired()])
+    gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
     submit = SubmitField('Register')
 
     def validate_email(self,field):
