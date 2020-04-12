@@ -1,0 +1,141 @@
+{% extends 'driver_masterlayout.html' %}
+
+{% block body %}
+
+<style>
+#gender {
+float:left;
+}
+  #gender li {
+  display: inline-block;
+  margin-left:6px;
+  }
+
+  .avatar-pic {
+width: 150px;
+}
+
+
+</style>
+<!-- ================ contact section start ================= -->
+<section class="contact-section section_padding">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <h2 class="contact-title"></h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class=flashes>
+                    {% for message in messages %}
+                    <li class="alert alert-info">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+
+    <div class="job_details_area">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="job_details_header">
+                        <div class="single_jobs white-bg d-flex justify-content-between">
+                            <div class="jobs_left d-flex align-items-center">
+                                <div class="" style="margin-right:10px;">
+                                    <img src="{{url_for('static',filename='uploads/'+user.profile_image)}}" class="img-responsive" style="width:80px;" alt="">
+                                </div>
+                                <div class="jobs_conetent">
+                                    <a href="#"><h4>{{user.fullname}}</h4></a>
+                                    <div class="links_locat d-flex align-items-center">
+                                        <div class="location">
+                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                        </div>
+                                        <div class="location">
+                                            <p> <i class=""></i>Zipcode: {{user.zipcode}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="descript_wrap white-bg">
+                        <div class="single_wrap">
+                            <h4>Description</h4>
+                            <p>{{user.profile_description}}</p>
+                        </div>
+
+                                       <div class="comments-area">
+                  <h4>Reviews</h4>
+
+                  <div class="comment-list">
+                     <div class="single-comment justify-content-between d-flex">
+                        <div class="user justify-content-between d-flex">
+                           <div class="thumb">
+                              <img src="img/comment/comment_3.png" alt="">
+                           </div>
+                           <div class="desc">
+                              <p class="comment">
+                                 Multiply sea night grass fourth day sea lesser rule open subdue female fill which them
+                                 Blessed, give fill lesser bearing multiply sea night grass fourth day sea lesser
+                              </p>
+                              <div class="d-flex justify-content-between">
+                                 <div class="d-flex align-items-center">
+                                    <h5>
+                                       <a href="#">Emilly Blunt</a>
+                                    </h5>
+                                    <p class="date">December 4, 2017 at 3:12 pm </p>
+                                 </div>
+                                 <div class="reply-btn">
+                                    <a href="#" class="btn-reply text-uppercase">reply</a>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+                    </div>
+
+
+
+
+                </div>
+                <div class="col-lg-4">
+                    <div class="job_sumary">
+                        <div class="summery_header">
+                            <h3>Driver Summery</h3>
+                        </div>
+                        <div class="job_content">
+                            <ul>
+                                <li>Member Since: <span>12 Nov, 2019</span></li>
+                                <li>Total rides: <span>2 Position</span></li>
+                                <li>Earned: <span>50k - 120k/y</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+            </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ contact section end ================= -->
+
+{% endblock %}

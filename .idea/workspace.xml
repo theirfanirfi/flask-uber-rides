@@ -3,16 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="b87c1a31-17fd-4362-aa1e-ebc998c599b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/driver/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/driver/templates/driver_index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/templates/driver_index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/driver/templates/driver_masterlayout.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/templates/driver_masterlayout.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/driver/templates/driver_profile_update.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/templates/driver_profile_update.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/driver/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/frontend/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/frontend/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/frontend/templates/masterlayout.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/frontend/templates/masterlayout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/frontend/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/frontend/templates/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/frontend/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/frontend/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,5 +57,9 @@
       <screen x="0" y="23" width="1280" height="777" />
     </state>
     <state x="317" y="244" key="com.intellij.ide.util.TipDialog/0.23.1280.777@0.23.1280.777" timestamp="1586174474844" />
+    <state x="305" y="124" width="670" height="676" key="search.everywhere.popup" timestamp="1586591370190">
+      <screen x="0" y="23" width="1280" height="777" />
+    </state>
+    <state x="305" y="124" width="670" height="676" key="search.everywhere.popup/0.23.1280.777@0.23.1280.777" timestamp="1586591370190" />
   </component>
 </project>

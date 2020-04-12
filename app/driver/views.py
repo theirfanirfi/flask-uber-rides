@@ -2,6 +2,7 @@ import os
 
 from flask import Blueprint, render_template, redirect, request, flash
 from flask_login import login_required, current_user
+from sqlalchemy import engine
 from werkzeug.utils import secure_filename
 from app import application, db
 from app.models.models import *
@@ -14,6 +15,8 @@ driveblueprint = Blueprint('driver_bp', __name__,
 	static_url_path='assets'
 	)
 
+
+
 @driveblueprint.route('/')
 @login_required
 def index():
@@ -21,6 +24,13 @@ def index():
 		return redirect('/logout')
 	else:
 		return render_template('driver_index.html')
+
+
+@driveblueprint.route('/profile')
+@login_required
+def profile():
+	user = db.session.query(User, Ride).outerjoin(Ride, Ride.driver_id == User.id).all()
+	return render_template('driver_profile.html',user=current_user)
 
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
@@ -90,3 +100,8 @@ def upload_profile_image():
 			return redirect("/driver/updateprofile")
 	else:
 		return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
+
+@driveblueprint.route("/myrides")
+@login_required
+def my_rides():
+	return render_template("driver_my_rides.html")
