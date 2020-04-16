@@ -54,13 +54,26 @@
     <li class="nav-item">
       <a class="nav-link" href="#team">Team</a>
     </li>
-    <li class="nav-item">
+
+      {% if current_user.is_authenticated %}
+                <li class="nav-item">
+
+      <a class="nav-link" href="/{{current_user.roles|lower}}/">Dashboard</a>
+    </li>
+
+                <li class="nav-item">
+      <a class="nav-link" href="/logout">Logout</a>
+    </li>
+      {% else %}
+          <li class="nav-item">
       <a class="nav-link" href="/login">Login</a>
     </li>
 
         <li class="nav-item">
       <a class="nav-link" href="/register">Don't have ID? Register</a>
     </li>
+{% endif %}
+
   </ul>
 
 </nav>

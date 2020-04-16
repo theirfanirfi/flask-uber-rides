@@ -30,7 +30,7 @@ def index():
 @login_required
 def profile():
 	user = db.session.query(User, Ride).outerjoin(Ride, Ride.driver_id == User.id).all()
-	return render_template('driver_profile.html',user=current_user)
+	return render_template('driver_profile.html', user=current_user)
 
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
@@ -46,7 +46,8 @@ def update_profile():
 		if request.method == "POST":
 			if form.validate_on_submit():
 				update_user = User.query.filter_by(id=user.id).first()
-				update_user.fullname = form.fullname.data
+				update_user.name = form.name.data
+				update_user.surname = form.surname.data
 				update_user.zipcode = form.zipcode.data
 				update_user.gender = form.gender.data
 				update_user.email = form.email.data
@@ -64,7 +65,8 @@ def update_profile():
 				return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
 		else:
 			form.email.data = user.email
-			form.fullname.data = user.fullname
+			form.name.data = user.name
+			form.surname.data = user.surname
 			form.zipcode.data = user.zipcode
 			form.profiledescription.data = user.profile_description
 			return render_template('driver_profile_update.html', form=form, imageForm=imageForm,user=user)

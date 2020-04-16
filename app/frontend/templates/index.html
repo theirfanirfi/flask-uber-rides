@@ -23,25 +23,30 @@
     <!-- catagory_area -->
     <div class="catagory_area">
         <div class="container">
-            <div class="row cat_search">
+              <div class="row cat_search">
                 <div class="col-lg-4 col-md-4">
+                    <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
                     <div class="single_input">
-                        <input type="location" placeholder="From">
+<!--                        <input type="location" placeholder="From">-->
+                        {{form.from_loc(placeholder='From location')}}
                     </div>
                 </div>
 
                                 <div class="col-lg-4 col-md-4">
                     <div class="single_input">
-                        <input type="location" placeholder="to">
+                        {{form.to_loc(placeholder='to location')}}
+
                     </div>
                 </div>
 
 
                 <div class="col-lg-4 col-md-12">
                     <div class="job_btn">
-                        <a href="#" class="boxed-btn3">Find Drivers</a>
+                            {{ form.csrf_token }}
+                        {{form.submit(class_='boxed-btn3',style='width:100%')}}
                     </div>
                 </div>
+                </form>
             </div>
 
         </div>

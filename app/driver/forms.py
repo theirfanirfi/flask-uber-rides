@@ -13,7 +13,8 @@ import os
 
 class ProfileForm(FlaskForm):
     profiledescription = TextAreaField('Describe yourself', validators=[DataRequired()])
-    fullname = StringField('text',validators=[DataRequired()])
+    name = StringField('text',validators=[DataRequired()])
+    surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     zipcode = StringField('text',validators=[DataRequired()])
     gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])

@@ -7,11 +7,13 @@ fp = Blueprint('frontend_blue_print', __name__,
                static_url_path='/static')
 from app.models.models import User
 from app import db
+from app.passenger.forms import *
 
 
 @fp.route('/')
 def index():
-    return render_template('index.html')
+    findForm = FindDriverForm()
+    return render_template('index.html',form=findForm)
 
 
 @fp.route('login', methods=['GET', 'POST'])
@@ -50,8 +52,7 @@ def register():
             else:
                 role = "Driver"
 
-            user = User(name=form.fullname.data,email=form.email.data,password=form.password.data,
-                        zipcode=form.zipcode.data,roles=role,gender=form.gender.data)
+            user = User(name=form.name.data,surname=form.surname.data,email=form.email.data,password=form.password.data,roles=role,gender=form.gender.data)
             db.session.add(user)
             try:
                 db.session.commit()

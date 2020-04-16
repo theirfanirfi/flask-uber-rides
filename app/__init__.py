@@ -2,9 +2,11 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import os
+# from flask_cors import CORS
+
 
 application = Flask(__name__)
-
+# CORS(application)
 # secret key
 folder = os.path.join(application.root_path,'static/uploads');
 application.config['SECRET_KEY'] = 'mysecret'

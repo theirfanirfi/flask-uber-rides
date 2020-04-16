@@ -1,0 +1,128 @@
+{% extends 'pass_masterlayout.html' %}
+
+{% block body %}
+
+<style>
+    .checked {
+    color: orange;
+    }
+</style>
+    <!-- catagory_area -->
+    <div class="catagory_area">
+        <div class="container">
+            <div class="row cat_search">
+                <div class="col-lg-4 col-md-4">
+                    <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
+                    <div class="single_input">
+<!--                        <input type="location" placeholder="From">-->
+                        {{form.from_loc(placeholder='From location')}}
+                    </div>
+                </div>
+
+                                <div class="col-lg-4 col-md-4">
+                    <div class="single_input">
+                        {{form.to_loc(placeholder='to location')}}
+
+                    </div>
+                </div>
+
+
+                <div class="col-lg-4 col-md-12">
+                    <div class="job_btn">
+                            {{ form.csrf_token }}
+                        {{form.submit(class_='boxed-btn3',style='width:100%')}}
+                    </div>
+                </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <!--/ catagory_area -->
+
+            <div class="job_lists">
+                <div class="container">
+                <div class="row">
+                    {% for d in drivers %}
+                    <div class="col-lg-12 col-md-12">
+                        <div class="single_jobs white-bg d-flex justify-content-between">
+                            <div class="jobs_left d-flex align-items-center">
+                                <div class="thumb">
+                                    {% if d.profile_image == "0" %}
+                                    <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"  class="img-responsive" style="width:70px;margin-right:16px;" alt="">
+                                    {% else %}
+                                    <img src="{{url_for('static',filename='uploads/'+d.profile_image)}}" style="width:70px;margin-right:16px;" alt="">
+                                    {% endif %}
+                                </div>
+                                <div class="jobs_conetent">
+                                    <a href="job_details.html"><h4>{{d.name}}
+                                        - <span style="font-weight:normal;color:gray;font-size:14px;">{{distance}} KMs away</span></h4> </a>
+                                    <div class="links_locat d-flex align-items-center">
+                                        <div class="location">
+                                          <p><i class="fa fa-tag"></i> Price: {{price}}$s
+                                            </p>
+                                        </div>
+                                        &nbsp;
+                                        &nbsp;
+                                        &nbsp;
+                                        <div class="location">
+                                            <p><span style="font-weight:bold;">Zipcode: </span> {{d.zipcode}}</p>
+                                        </div>
+
+                                    </div>
+
+                                    <p style="margin-left:6px;">
+                                        {% for i in range(5) %}
+                                        {% if i+1 <= stars %}
+                                        <span class="fa fa-star checked"></span>
+                                        {% else %}
+                                        <span class="fa fa-star"></span>
+                                        {% endif %}
+                                        {% endfor %}
+                                        &nbsp; ({{stars}})
+                                    </p>
+
+                                </div>
+                            </div>
+                            <div class="jobs_right">
+                                <div class="apply_now">
+
+                                    <a url="{{url_for('passenger_bp.send_booking_request',
+                                     driver_id=d.id)}}" class="boxed-btn3 link">Send booking request</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                </div>
+            </div>
+
+
+
+
+{% endblock %}
+
+{% block customscript %}
+<script>
+    $(document).ready(function(){
+    $('.link').click(function(){
+    var link = $(this);
+    if($(link).text() == "Request sent"){
+    alert('Request already sent');
+    }else{
+       var url = "http://localhost:5000" + $(this).attr('url');
+        $.get(url,{from_loc: '{{from_loc}}',to_loc: '{{to_loc}}',price: {{price}},distance: {{distance}}},function(data){
+        if(data == "1"){
+        $(link).text("Request sent");
+        $(link).attr('readonly',true);
+        }else {
+        alert('error');
+        }
+        });
+        }
+    });
+
+    });
+</script>
+{% endblock %}

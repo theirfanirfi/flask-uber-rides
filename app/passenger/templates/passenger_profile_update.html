@@ -1,4 +1,4 @@
-{% extends 'driver_masterlayout.html' %}
+{% extends 'pass_masterlayout.html' %}
 
 {% block body %}
 
@@ -35,7 +35,7 @@ width: 150px;
                 </ul>
                 {% endif %}
                 {% endwith %}
-                <form action="{{ url_for('driver_bp.update_profile') }}" class="form-contact contact_form"
+                <form action="{{ url_for('passenger_bp.update_profile') }}" class="form-contact contact_form"
                       method="post">
                     <div class="row">
                         <div class="col-12">
@@ -105,7 +105,7 @@ width: 150px;
             <!--          profile image section -->
             <div class="col-md-4">
                 <div class="media contact-info">
-                    <form action="{{ url_for('driver_bp.upload_profile_image') }}" class="md-form"
+                    <form action="{{ url_for('passenger_bp.upload_profile_image') }}" class="md-form"
                           enctype="multipart/form-data" method="post">
                         <div class="file-field">
                             <div class="mb-4">

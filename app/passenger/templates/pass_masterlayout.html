@@ -54,6 +54,10 @@
     <li class="nav-item">
       <a class="nav-link" href="#team">My Rides</a>
     </li>
+
+          <li class="nav-item">
+      <a class="nav-link" href="{{url_for('passenger_bp.profile')}}">Profile</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" href="/login">Notifications</a>
     </li>
@@ -109,5 +113,8 @@
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
+{% block customscript %}
+{% endblock %}
 
 </body>
+</html>

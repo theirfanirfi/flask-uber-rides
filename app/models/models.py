@@ -1,7 +1,7 @@
-# from flask import mod
 from app import db, login_manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, current_user
+from datetime import datetime
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -10,22 +10,26 @@ def load_user(user_id):
 class User(db.Model,UserMixin):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    surname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    # country = db.Column(db.String(100), unique=True, nullable=True)
     password = db.Column(db.String(150), nullable=False)
-    zipcode = db.Column(db.String(100), nullable=False)
+    zipcode = db.Column(db.String(100), nullable=True)
     roles = db.Column(db.String(10), default="Passenger")
-    profile_image = db.Column(db.String(255), nullable=True)
+    profile_image = db.Column(db.String(255), nullable=True, default="0")
     profile_description = db.Column(db.String(255), nullable=True)
     gender = db.Column(db.Integer, nullable=False)
+    member_since = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    charges_per_kilo = db.Column(db.Integer, default=0) #only for driver
     passengers = db.relationship('Ride', foreign_keys="[Ride.passenger_id]")
     drivers = db.relationship('Ride', foreign_keys="[Ride.driver_id]")
 
-    def __init__(self, name, email, password, zipcode, roles, gender):
-        self.fullname = name
+    def __init__(self, name, surname, email, password, roles, gender):
+        self.name = name
+        self.surname = surname
         self.email = email
         self.password = generate_password_hash(password)
-        self.zipcode = zipcode
         self.roles = roles
         self.gender = gender
 
@@ -65,21 +69,24 @@ class Ride(db.Model):
     isStarted = db.Column(db.Integer, default=0)
     isEnded = db.Column(db.Integer, default=0)
     isPaid = db.Column(db.Integer, default=0)
+    isConfirmed = db.Column(db.Integer, default=0)
     # will be updated when ride ends
     passenger_ratings = db.Column(db.Integer, nullable=True)
     # will be updated when ride ends
     driver_ratings = db.Column(db.Integer, nullable=True)
+    distance = db.Column(db.Integer, nullable=False)
     driver_review_for_passenger = db.Column(
         db.String(255), nullable=True)  # will be updated when ride ends
     passenger_review_for_driver = db.Column(
         db.String(255), nullable=True)  # will be updated when ride ends
     price = db.Column(db.Integer, nullable=False)
+    ride_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    def __init__(self, driver, passenger, zipcode, from_locaton, to_location, ispaid, price):
-        self.driver_id = driver
-        self.passenger_id = passenger
+    def __init__(self, driver_id, passenger_id, zipcode, from_locaton, to_location, price,distance):
+        self.driver_id = driver_id
+        self.passenger_id = passenger_id
         self.zipcode = zipcode
         self.from_loc = from_locaton
         self.to_loc = to_location
-        self.isPaid = ispaid
         self.price = price
+        self.distance = distance

@@ -8,11 +8,20 @@
                         <h4>Register</h4>
                         <form action="/register" method="post">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="input_field">
-                                        {{form.fullname(placeholder='Full name')}}
-                                        {% if form.fullname.errors %}
-                                        <p style="color:red;"> {{ form.fullname.errors[0] }}</p>
+                                        {{form.name(placeholder='Name')}}
+                                        {% if form.name.errors %}
+                                        <p style="color:red;"> {{ form.name.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                                                <div class="col-md-6">
+                                    <div class="input_field">
+                                        {{form.surname(placeholder='Sur name')}}
+                                        {% if form.surname.errors %}
+                                        <p style="color:red;"> {{ form.surname.errors[0] }}</p>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -26,7 +35,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="input_field">
-                                        {{form.zipcode(placeholder='Zip code')}}
+                                        {{form.zipcode(placeholder='Zip code (Optional)')}}
                                         {% if form.zipcode.errors %}
                                         <p style="color:red;">{{ form.zipcode.errors[0] }}</p>
                                         {% endif %}

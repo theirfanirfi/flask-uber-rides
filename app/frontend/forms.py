@@ -12,11 +12,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class RegisterationForm(FlaskForm):
-    fullname = StringField('text',validators=[DataRequired()])
+    name = StringField('text',validators=[DataRequired()])
+    surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Password & Confirm password must match!')])
     pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
-    zipcode = StringField('text',validators=[DataRequired()])
+    zipcode = StringField('text')
     driver_or_pass = RadioField('Label', choices=[('1', 'Driver'), ('0', 'Passenger')], validators=[DataRequired()])
     gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
     submit = SubmitField('Register')
