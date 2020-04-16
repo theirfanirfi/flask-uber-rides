@@ -1,8 +1,7 @@
 import os
-
 from flask import Blueprint, render_template, redirect, request, flash
 from flask_login import login_required, current_user
-from sqlalchemy import engine
+from sqlalchemy import text
 from werkzeug.utils import secure_filename
 from app import application, db
 from app.models.models import *
@@ -29,9 +28,22 @@ def index():
 @driveblueprint.route('/profile')
 @login_required
 def profile():
-	user = db.session.query(User, Ride).outerjoin(Ride, Ride.driver_id == User.id).all()
-	return render_template('driver_profile.html', user=current_user)
+	user_id = current_user.id
+	sql = text(" select *,"
+			   "(select count(*) from rides where driver_id = "+str(user_id)+" and isEnded=1) as total_rides,"
+			   "(select sum(price) from rides where driver_id = "+str(user_id)+") as total_earning "
+			   "from users "
+			   "LEFT JOIN rides on users.id = rides.driver_id "
+			   "WHERE users.id = "+str(user_id)+";")
 
+	user = db.engine.execute(sql)
+	u = user.first()
+
+	reviewsFetchSql= text("select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
+						  "where rides.driver_id = "+str(user_id)+";")
+	reviews = db.engine.execute(reviewsFetchSql)
+
+	return render_template('driver_profile.html', user=u, reviews=reviews)
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
 def update_profile():
@@ -107,3 +119,11 @@ def upload_profile_image():
 @login_required
 def my_rides():
 	return render_template("driver_my_rides.html")
+
+
+@driveblueprint.route("/notifications")
+@login_required
+def driver_notifications():
+	user = current_user
+	ridesNotifications = Ride.query.filter_by(driver_id=user.id,isStarted=0,isEnded=0,isPaid=0,isConfirmed=0).all()
+	return render_template("driver_notifications.html", rides=ridesNotifications, user=user)

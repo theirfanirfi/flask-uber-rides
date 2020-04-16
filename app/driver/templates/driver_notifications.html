@@ -1,0 +1,122 @@
+{% extends 'driver_masterlayout.html' %}
+
+{% block body %}
+
+<style>
+#gender {
+float:left;
+}
+  #gender li {
+  display: inline-block;
+  margin-left:6px;
+  }
+
+  .avatar-pic {
+width: 150px;
+}
+
+
+</style>
+<!-- ================ contact section start ================= -->
+<section class="contact-section section_padding">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+                <h2 class="contact-title"></h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class=flashes>
+                    {% for message in messages %}
+                    <li class="alert alert-info">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+
+                    <!-- job_listing_area_start  -->
+    <div class="job_listing_area" style="background-color:white;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="section_title">
+                        <h3>Notifications</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="job_lists">
+                <div class="row">
+
+
+
+                    <div class="col-lg-12 col-md-12">
+                        <div class="single_jobs white-bg d-flex justify-content-between">
+                            <div class="col-md-6">
+                            <div class="jobs_left d-flex align-items-center">
+                                <div class="thumb">
+                                    <img src="img/svg_icon/2.svg" alt="">
+                                </div>
+                                <div class="jobs_conetent">
+                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                    <div class="links_locat d-flex align-items-center">
+                                        <div class="location">
+                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                        </div>
+                                        <div class="location">
+                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <div class="col-md-6">
+
+                            <div class="jobs_right">
+
+
+                                <div class=" pull-left">
+                                    <img style="width:80px;margin-left:10px;margin-right:12px;" src="{{url_for('static',filename='uploads/46784605_1309528232522621_5745119177648111616_o.jpg')}}" alt="">
+                                </div>
+                                <div class="jobs_conetent">
+                                    <a href="job_details.html"><h4>Digital Marketer </h4><span>[Passenger]</span></a>
+                                    <div class="links_locat d-flex align-items-center">
+                                        <div class="location">
+                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                        </div>
+                                        <div class="location">
+                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- job_listing_area_end  -->
+
+
+            </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ================ contact section end ================= -->
+
+{% endblock %}
