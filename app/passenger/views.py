@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, render_template, request, flash
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, confirm_login
 from werkzeug.utils import secure_filename
 from sqlalchemy import text
 
@@ -17,6 +17,18 @@ from app import db
 
 PRICE = 20
 
+# @application.context_processor
+# @login_required
+# def inject_dict_for_all_templates():
+# 	notifications_count = db.engine.execute("select count(*) from rides where passenger_id ="+str(current_user.id)+" and isConfirmed=1 and isStarted = 0 and isPaid = 0 and isEnded =0")
+# 	c = str(notifications_count.first()[0])
+# 	return dict(count=c)
+
+def get_notifications_count():
+	notifications_count = db.engine.execute("select count(*) from rides where passenger_id ="+str(current_user.id)+" and isConfirmed=1 and isStarted = 0 and isPaid = 0 and isEnded =0")
+	c = str(notifications_count.first()[0])
+	return c
+
 @pb.route('/')
 @login_required
 def home():
@@ -24,7 +36,8 @@ def home():
 	if not User.is_passenger(current_user):
 		return redirect('/logout')
 	else:
-		return render_template('pass_index.html',form=findForm)
+		#return render_template_with_notifications_count('pass_index.html',{form=findForm})
+		return render_template('pass_index.html',form=findForm,count=get_notifications_count())
 
 @pb.route('find',methods=['POST'])
 @login_required
@@ -43,7 +56,7 @@ def finddriver():
 
 		return render_template('pass_driver_found.html', drivers=drivers, distance=distance_in_km,
 							   price=calculated_price, form=form, stars=stars, from_loc=form.from_loc.data,
-							   to_loc=form.to_loc.data)
+							   to_loc=form.to_loc.data,count=get_notifications_count())
 	else:
 		return 'form not validate'
 	# return render_template('pass_driver_found.html')
@@ -82,7 +95,7 @@ def profile():
 	reviewsFetchSql= text("select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
 						  "where rides.passenger_id = "+str(user_id)+";")
 	reviews = db.engine.execute(reviewsFetchSql)
-	return render_template('passenger_profile.html', user=u, reviews=reviews)
+	return render_template('passenger_profile.html', user=u, reviews=reviews,count=get_notifications_count())
 
 @pb.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
@@ -114,14 +127,14 @@ def update_profile():
 					 flash('Error occurred in updating the profile, please try again.')
 					 return redirect("/passenger/updateprofile")
 			else:
-				return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
+				return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,count=get_notifications_count())
 		else:
 			form.email.data = user.email
 			form.name.data = user.name
 			form.surname.data = user.surname
 			form.zipcode.data = user.zipcode
 			form.profiledescription.data = user.profile_description
-			return render_template('passenger_profile_update.html', form=form, imageForm=imageForm,user=user)
+			return render_template('passenger_profile_update.html', form=form, imageForm=imageForm,user=user,count=get_notifications_count())
 
 
 @pb.route("/uploadimage", methods=['POST'])
@@ -154,5 +167,5 @@ def upload_profile_image():
 			flash('Error occurred in updating the profile image, please try again.')
 			return redirect("/passenger/updateprofile")
 	else:
-		return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user)
+		return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,count=get_notifications_count())
 

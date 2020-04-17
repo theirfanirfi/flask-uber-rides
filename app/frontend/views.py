@@ -9,11 +9,10 @@ from app.models.models import User
 from app import db
 from app.passenger.forms import *
 
-
 @fp.route('/')
 def index():
-    findForm = FindDriverForm()
-    return render_template('index.html',form=findForm)
+    findform = FindDriverForm()
+    return render_template('index.html', form=findform)
 
 
 @fp.route('login', methods=['GET', 'POST'])

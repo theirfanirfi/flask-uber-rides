@@ -24,13 +24,14 @@
     <div class="catagory_area">
         <div class="container">
               <div class="row cat_search">
+                  <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
+
                 <div class="col-lg-4 col-md-4">
-                    <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
                     <div class="single_input">
-<!--                        <input type="location" placeholder="From">-->
                         {{form.from_loc(placeholder='From location')}}
                     </div>
                 </div>
+
 
                                 <div class="col-lg-4 col-md-4">
                     <div class="single_input">

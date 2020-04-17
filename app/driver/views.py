@@ -1,6 +1,6 @@
 import os
 from flask import Blueprint, render_template, redirect, request, flash
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, confirm_login
 from sqlalchemy import text
 from werkzeug.utils import secure_filename
 from app import application, db
@@ -14,11 +14,17 @@ driveblueprint = Blueprint('driver_bp', __name__,
 	static_url_path='assets'
 	)
 
-@application.context_processor
-def inject_dict_for_all_templates():
+# @application.context_processor
+# @login_required
+# def inject_dict_for_all_templates():
+# 	notifications_count = db.engine.execute("select count(*) from rides where driver_id ="+str(current_user.id)+" and isConfirmed=0 and isStarted = 0 and isPaid = 0 and isEnded =0")
+# 	c = str(notifications_count.first()[0])
+# 	return dict(count=c)
+
+def get_notifications_count():
 	notifications_count = db.engine.execute("select count(*) from rides where driver_id ="+str(current_user.id)+" and isConfirmed=0 and isStarted = 0 and isPaid = 0 and isEnded =0")
 	c = str(notifications_count.first()[0])
-	return dict(count=c)
+	return c
 
 @driveblueprint.route('/')
 @login_required
@@ -26,7 +32,7 @@ def index():
 	if not User.is_driver(current_user):
 		return redirect('/logout')
 	else:
-		return render_template('driver_index.html')
+		return render_template('driver_index.html',count=get_notifications_count())
 
 
 @driveblueprint.route('/profile')
@@ -47,7 +53,7 @@ def profile():
 						  "where rides.driver_id = "+str(user_id)+";")
 	reviews = db.engine.execute(reviewsFetchSql)
 
-	return render_template('driver_profile.html', user=u, reviews=reviews)
+	return render_template('driver_profile.html', user=u, reviews=reviews,count=get_notifications_count())
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
 def update_profile():
@@ -78,14 +84,14 @@ def update_profile():
 					 flash('Error occurred in updating the profile, please try again.')
 					 return redirect("/driver/updateprofile")
 			else:
-				return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
+				return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,count=get_notifications_count())
 		else:
 			form.email.data = user.email
 			form.name.data = user.name
 			form.surname.data = user.surname
 			form.zipcode.data = user.zipcode
 			form.profiledescription.data = user.profile_description
-			return render_template('driver_profile_update.html', form=form, imageForm=imageForm,user=user)
+			return render_template('driver_profile_update.html', form=form, imageForm=imageForm,user=user,count=get_notifications_count())
 
 
 @driveblueprint.route("/uploadimage", methods=['POST'])
@@ -117,12 +123,12 @@ def upload_profile_image():
 			flash('Error occurred in updating the profile image, please try again.')
 			return redirect("/driver/updateprofile")
 	else:
-		return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
+		return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,count=get_notifications_count())
 
 @driveblueprint.route("/myrides")
 @login_required
 def my_rides():
-	return render_template("driver_my_rides.html")
+	return render_template("driver_my_rides.html",count=get_notifications_count())
 
 
 @driveblueprint.route("/notifications")
@@ -136,7 +142,7 @@ def driver_notifications():
 	rides = db.engine.execute(sql)
 
 	ridesNotifications = Ride.query.filter_by(driver_id=user.id,isStarted=0,isEnded=0,isPaid=0,isConfirmed=0).all()
-	return render_template("driver_notifications.html", rides=rides, user=user)
+	return render_template("driver_notifications.html", rides=rides, user=user,count=get_notifications_count())
 
 @driveblueprint.route("/approve/<int:request_id>")
 @login_required
