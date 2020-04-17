@@ -14,7 +14,11 @@ driveblueprint = Blueprint('driver_bp', __name__,
 	static_url_path='assets'
 	)
 
-
+@application.context_processor
+def inject_dict_for_all_templates():
+	notifications_count = db.engine.execute("select count(*) from rides where driver_id ="+str(current_user.id)+" and isConfirmed=0 and isStarted = 0 and isPaid = 0 and isEnded =0")
+	c = str(notifications_count.first()[0])
+	return dict(count=c)
 
 @driveblueprint.route('/')
 @login_required
@@ -125,5 +129,46 @@ def my_rides():
 @login_required
 def driver_notifications():
 	user = current_user
+	sql = text("SELECT *,rides.id as ride_id,users.id as p_id,(select count(*) from rides WHERE driver_id = "+str(user.id)+" AND isStarted = 0 AND isConfirmed=0 "
+																					  "AND isEnded=0 AND isPaid=0) as total_requests "
+																					  "FROM rides LEFT JOIN users on users.id = rides.passenger_id "
+			   "WHERE driver_id = "+str(user.id)+" AND isStarted = 0 AND isConfirmed=0 AND isEnded=0 AND isPaid=0;")
+	rides = db.engine.execute(sql)
+
 	ridesNotifications = Ride.query.filter_by(driver_id=user.id,isStarted=0,isEnded=0,isPaid=0,isConfirmed=0).all()
-	return render_template("driver_notifications.html", rides=ridesNotifications, user=user)
+	return render_template("driver_notifications.html", rides=rides, user=user)
+
+@driveblueprint.route("/approve/<int:request_id>")
+@login_required
+def approve_request(request_id):
+	user = current_user
+	ride = Ride.query.filter_by(id=request_id,driver_id=user.id,isConfirmed=0,isStarted=0,isEnded=0).first()
+	if not ride:
+		return '2' #show alert that no such request found.
+	else:
+		try:
+			ride.isConfirmed = 1
+			db.session.add(ride)
+			db.session.commit()
+			return "1" #request confirmed, please wait for the passenger payment to start the ride.
+		except Exception as e:
+			return "0" #show alert message, that an error has occurred,request cannot be confirmed. Try refreshing the page
+
+@driveblueprint.route("/decline/<int:request_id>")
+@login_required
+def decline_request(request_id):
+	user = current_user
+	ride = Ride.query.filter_by(id=request_id,driver_id=user.id,isConfirmed=0,isStarted=0,isEnded=0).first()
+	if not ride:
+		return '2' #show alert that no such request found.
+	else:
+		try:
+			ride.isConfirmed = 2 #2 means request declined
+			db.session.add(ride)
+			db.session.commit()
+			return "1" #request declined,
+		except Exception as e:
+			return "0" #show alert message, that an error has occurred,request cannot be declined. Try refreshing the page
+
+
+

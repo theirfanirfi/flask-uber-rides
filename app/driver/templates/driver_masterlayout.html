@@ -55,7 +55,9 @@
       <a class="nav-link" href="{{url_for('driver_bp.my_rides')}}">My Rides</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="{{url_for('driver_bp.driver_notifications')}}">Notifications</a>
+      <a class="nav-link" href="{{url_for('driver_bp.driver_notifications')}}">Notifications
+      <i class="btn-danger"> ({{count}})</i>
+      </a>
     </li>
 
           <li class="nav-item">
@@ -114,5 +116,8 @@
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
+{% block customscript %}
 
+{% endblock %}
 </body>
+</html>

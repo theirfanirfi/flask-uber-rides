@@ -66,10 +66,10 @@ class Ride(db.Model):
     zipcode = db.Column(db.String(100), nullable=False)
     from_loc = db.Column(db.String(150), nullable=False)
     to_loc = db.Column(db.String(150), nullable=False)
-    isStarted = db.Column(db.Integer, default=0)
-    isEnded = db.Column(db.Integer, default=0)
-    isPaid = db.Column(db.Integer, default=0)
-    isConfirmed = db.Column(db.Integer, default=0)
+    isStarted = db.Column(db.Integer, default=0) #0: not started, 1: started
+    isEnded = db.Column(db.Integer, default=0) #0: not ended, 1: ended
+    isPaid = db.Column(db.Integer, default=0) #0: not paid, 1: paid
+    isConfirmed = db.Column(db.Integer, default=0) #0: request not entertained yet, 1: accepted, 2: declined
     # will be updated when ride ends
     passenger_ratings = db.Column(db.Integer, nullable=True)
     # will be updated when ride ends

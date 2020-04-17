@@ -1,6 +1,7 @@
-from flask import Blueprint, redirect, render_template, request, jsonify, make_response, flash
+from flask import Blueprint, redirect, render_template, request, flash
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
+from sqlalchemy import text
 
 pb = Blueprint('passenger_bp',__name__,
 			   template_folder='templates',
@@ -67,8 +68,21 @@ def send_booking_request(driver_id):
 @pb.route('/profile')
 @login_required
 def profile():
-	user = db.session.query(User, Ride).outerjoin(Ride, Ride.driver_id == User.id).all()
-	return render_template('passenger_profile.html', user=current_user)
+	user_id = current_user.id
+	sql = text(" select *,"
+			   "(select count(*) from rides where passenger_id = "+str(user_id)+" and isEnded=1) as total_rides,"
+			   "(select sum(price) from rides where passenger_id = "+str(user_id)+") as total_spent "
+			   "from users "
+			   "LEFT JOIN rides on users.id = rides.passenger_id "
+			   "WHERE users.id = "+str(user_id)+";")
+
+	user = db.engine.execute(sql)
+	u = user.first()
+
+	reviewsFetchSql= text("select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
+						  "where rides.passenger_id = "+str(user_id)+";")
+	reviews = db.engine.execute(reviewsFetchSql)
+	return render_template('passenger_profile.html', user=u, reviews=reviews)
 
 @pb.route('/updateprofile', methods=['GET', 'POST'])
 @login_required
