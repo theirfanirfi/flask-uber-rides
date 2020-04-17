@@ -82,9 +82,8 @@ width: 150px;
                                         </div>
 
                                     </div>
-
-                                   <a url="{{url_for('driver_bp.approve_request',request_id=ride.ride_id)}}" class="btn btn-success acceptlink">Accept</a>
-                                             <a url="{{url_for('driver_bp.decline_request',request_id=ride.ride_id)}}" class="btn btn-danger declinelink">Decline</a>
+                                <p class="alert alert-success">Your request is confirmed, please proceed with the payment process to start the ride.</p>
+                                   <a style="width:100%;" href="{{url_for('passenger_bp.pay_ride',ride_id=ride.ride_id)}}" class="btn btn-success">Pay</a>
                             </div>
                             <div class="col-md-4">
 
@@ -99,7 +98,7 @@ width: 150px;
                                     {% endif %}
                                 </div>
                                 <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>{{ride.name}}</h4><span style="font-size:12px;color:gray;">[Passenger]</span></a>
+                                    <a href="job_details.html"><h4>{{ride.name}}</h4><span style="font-size:12px;color:gray;">[Driver]</span></a>
 
 
                                 </div>
@@ -127,49 +126,13 @@ width: 150px;
             </div>
         </div>
     </div>
+
 </section>
 <!-- ================ contact section end ================= -->
 
-{% endblock %}
-
-{% block customscript %}
-<script>
-    $(document).ready(function(){
-    $('.acceptlink').click(function(){
-    reqlink = $(this);
-    var url = "http://localhost:5000";
-    url = url + $(this).attr('url');
-    $.get(url,function(response){
-    console.log(response);
-    if(response == "2"){
-    alert('No such ride request found')
-    }else if(response == "1"){
-    alert('Request confirmed, please wait for the passenger payment to start the ride.');
-    $(reqlink).text('Accepted');
-    }else if(response == "0"){
-    alert('An error has occurred, request cannot be confirmed. Try refreshing the page.')
-    }
-    });
-    });
 
 
-    $('.declinelink').click(function(){
-    reqlink = $(this);
-    var url = "http://localhost:5000";
-    url = url + $(this).attr('url');
-    $.get(url,function(response){
-    console.log(response);
-    if(response == "2"){
-    alert('No such ride request found')
-    }else if(response == "1"){
-    alert('Request declined.');
-    $(reqlink).text('Declined');
-    }else if(response == "0"){
-    alert('An error has occurred, request cannot be declined. Try refreshing the page.')
-    }
-    });
-    });
 
-    });
-</script>
+
+
 {% endblock %}

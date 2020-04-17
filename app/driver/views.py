@@ -141,7 +141,6 @@ def driver_notifications():
 			   "WHERE driver_id = "+str(user.id)+" AND isStarted = 0 AND isConfirmed=0 AND isEnded=0 AND isPaid=0;")
 	rides = db.engine.execute(sql)
 
-	ridesNotifications = Ride.query.filter_by(driver_id=user.id,isStarted=0,isEnded=0,isPaid=0,isConfirmed=0).all()
 	return render_template("driver_notifications.html", rides=rides, user=user,count=get_notifications_count())
 
 @driveblueprint.route("/approve/<int:request_id>")

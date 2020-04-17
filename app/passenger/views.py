@@ -169,3 +169,24 @@ def upload_profile_image():
 	else:
 		return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,count=get_notifications_count())
 
+@pb.route("/notifications")
+@login_required
+def passenger_notifications():
+	user = current_user
+	sql = text("SELECT *,rides.id as ride_id,users.id as d_id,(select count(*) from rides WHERE passenger_id = "+str(user.id)+" AND isStarted = 0 AND isConfirmed=0 "
+																					  "AND isEnded=0 AND isPaid=0) as total_requests "
+																					  "FROM rides LEFT JOIN users on users.id = rides.driver_id "
+			   "WHERE passenger_id = "+str(user.id)+" AND isStarted = 0 AND isConfirmed=1 AND isEnded=0 AND isPaid=0;")
+	rides = db.engine.execute(sql)
+	return render_template("passenger_notifications.html", rides=rides, user=user,count=get_notifications_count())
+
+
+@pb.route("/pay/<int:ride_id>")
+@login_required
+def pay_ride(ride_id):
+	user = current_user
+	ride = Ride.query.filter_by(id=ride_id,passenger_id=user.id,isConfirmed=1,isStarted=0,isEnded=0).first()
+	if not ride:
+		return '2' #show alert that no such request found.
+	else:
+		return render_template('pass_pay.html',count=get_notifications_count())

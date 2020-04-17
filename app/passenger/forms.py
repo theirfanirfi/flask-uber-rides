@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, RadioField, TextAreaField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, RadioField, TextAreaField, HiddenField, IntegerField
 from wtforms.validators import DataRequired,Email,EqualTo, Length
 from app.models.models import User
 from app import application
@@ -19,4 +19,14 @@ class BookingRequestForm(FlaskForm):
     price = HiddenField('text', validators=[DataRequired()])
     distance = HiddenField('text', validators=[DataRequired()])
     submit = SubmitField('Send booking Request')
+
+class PaymentForm(FlaskForm):
+    card_number = StringField('text', validators=[DataRequired()])
+    cv_code = IntegerField('text', validators=[DataRequired()])
+    exp_year = IntegerField('text', validators=[DataRequired()])
+    exp_month = IntegerField('text', validators=[DataRequired()])
+    payment = IntegerField('text', validators=[DataRequired()])
+    driver_id = HiddenField('text', validators=[DataRequired()])
+    ride_id = HiddenField('text', validators=[DataRequired()])
+    submit = SubmitField('Pay')
 
