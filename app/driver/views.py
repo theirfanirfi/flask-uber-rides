@@ -39,9 +39,9 @@ def index():
 @login_required
 def profile():
 	user_id = current_user.id
-	sql = text(" select *,"
-			   "(select count(*) from rides where driver_id = "+str(user_id)+" and isEnded=1) as total_rides,"
-			   "(select sum(price) from rides where driver_id = "+str(user_id)+") as total_earning "
+	sql = text(" select *, "
+			   "(select count(*) from rides where driver_id = "+str(user_id)+" and isEnded=1) as total_rides, "
+			   "(select sum(price) from rides where driver_id = "+str(user_id)+" and isEnded=1) as total_earning "
 			   "from users "
 			   "LEFT JOIN rides on users.id = rides.driver_id "
 			   "WHERE users.id = "+str(user_id)+";")
@@ -49,8 +49,8 @@ def profile():
 	user = db.engine.execute(sql)
 	u = user.first()
 
-	reviewsFetchSql= text("select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
-						  "where rides.driver_id = "+str(user_id)+";")
+	reviewsFetchSql= text("select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.passenger_id "
+						  "where rides.driver_id = "+str(user_id)+" and isEnded=1;")
 	reviews = db.engine.execute(reviewsFetchSql)
 
 	return render_template('driver_profile.html', user=u, reviews=reviews,count=get_notifications_count())

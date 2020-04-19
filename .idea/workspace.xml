@@ -3,10 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b87c1a31-17fd-4362-aa1e-ebc998c599b5" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/passenger/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/passenger/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/passenger/templates/pass_pay.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/passenger/templates/pass_pay.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/passenger/templates/passenger_notifications.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/passenger/templates/passenger_notifications.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/driver/templates/driver_profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/templates/driver_profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/driver/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/driver/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/passenger/templates/passenger_started_ride.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/passenger/templates/passenger_started_ride.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/passenger/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/passenger/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

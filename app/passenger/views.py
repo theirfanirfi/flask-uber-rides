@@ -231,15 +231,24 @@ def started_ride():
         if not ride or not driver:
             return 'No started ride found'  # show alert that no such request found.
         else:
-            return render_template('passenger_started_ride.html', count=get_notifications_count(), ride=ride,user=user,driver=driver)
+            form = RideRatingForm()
+            return render_template('passenger_started_ride.html', count=get_notifications_count(), ride=ride,user=user,driver=driver, form=form)
     elif request.method == 'POST':
-        ride.isPaid = 1
-        ride.isStarted = 1
-        try:
-            db.session.add(ride)
-            db.session.commit()
-            return 'ride started'
-        except Exception as e:
-            return 'error'
+        review = request.form.get('rev')
+        stars = request.form.get('str')
+        ride_id = request.form.get('id')
+        ride = Ride.query.filter_by(passenger_id=user.id, id=ride_id,isConfirmed=1, isStarted=1, isEnded=0, isPaid=1).first()
+        if not ride:
+            return "2" #no such ride found to end
+        else:
+            ride.passenger_review_for_driver = review
+            ride.driver_ratings = stars
+            ride.isEnded = 1
+            try:
+                db.session.add(ride)
+                db.session.commit()
+                return '1' #ride ended
+            except Exception as e:
+                return '0' #error occurred in reviewing and ending the ride. Try again.
     else:
         return 'Invalid request'

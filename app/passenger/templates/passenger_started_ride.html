@@ -14,6 +14,17 @@ float:left;
   .avatar-pic {
 width: 150px;
 }
+.stars{
+font-size:44px;
+cursor:pointer;
+margin-left:18px;
+}
+.stars:hover {
+color:orange;
+}
+.checked {
+color:orange;
+}
 
 .clockbody {
   background: black;
@@ -72,6 +83,7 @@ width: 150px;
     transform: translateY(-20vh);
   }
 }
+
 
 
 
@@ -185,16 +197,14 @@ width: 150px;
             </div>
 
 
-
-
         </div>
     </div>
     </div>
 
     <div class="container">
-                    <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-7">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-7">
                 <div class="clockbody">
                     <div class="clock">
                         <div class="hours">
@@ -225,21 +235,36 @@ width: 150px;
                         </div>
                     </div>
                 </div>
-                    </div>
             </div>
+        </div>
 
         <div class="row" style="margin-top:20px;">
-            <h1>End Ride</h1>
             <div class="col-md-2"></div>
-            <div class="col-md-6">
+            <div class="col-md-7">
+                    <label style="font-weight:bold;">Review</label>
+                    <textarea class="form-control" id="review" placeholder="Review" rows="10"></textarea>
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-7">
+                            <p style="margin-top:20px;">
+                                <i class="fa fa-star stars" value="1"></i>
+                                <i class="fa fa-star stars" value="2"></i>
+                                <i class="fa fa-star stars" value="3"></i>
+                                <i class="fa fa-star stars" value="4"></i>
+                                <i class="fa fa-star stars" value="5"></i>
+                            </p>
 
+                            <button id="end" class="btn btn-success center" style="width:100%;">End ride</button>
+
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
 </section>
 <!-- ================ contact section end ================= -->
 <script>
-    var hoursContainer = document.querySelector('.hours')
+var hoursContainer = document.querySelector('.hours')
 var minutesContainer = document.querySelector('.minutes')
 var secondsContainer = document.querySelector('.seconds')
 var tickElements = Array.from(document.querySelectorAll('.tick'))
@@ -315,6 +340,38 @@ function updateNumber (element, number) {
 
 setInterval(updateTime, 100)
 
+
 </script>
 
+{% endblock %}
+
+{% block customscript %}
+<script>
+stars = 0;
+var url = "http://localhost:5000/passenger/started";
+$('.stars').click(function(){
+var star = $(this);
+$('.stars').removeClass('checked');
+star.addClass('checked').prevAll().addClass('checked');
+stars = star.attr('value');
+});
+
+
+//when end button is clicked
+$('#end').click(function(){
+
+review = $('#review').val();
+ride_id = {{ride.id}}
+$.post(url,{rev: review, id: ride_id, str: stars},function(data){
+if(data == "2"){
+alert('no such ride found to end');
+}else if(data == "0"){
+alert('error occurred in ending the ride, please try again');
+}else if(data == "1"){
+alert('ride ended.');
+window.location.href="http://localhost:5000/passenger/"
+}
+});
+});
+</script>
 {% endblock %}
