@@ -81,6 +81,8 @@ class Ride(db.Model):
     passenger_review_for_driver = db.Column(
         db.String(255), nullable=True)  # will be updated when ride ends
     price = db.Column(db.Integer, nullable=False)
+    # isReviewedByDriver = db.Column(db.Integer, nullable=False, default=0)
+    # isReviewedByPassenger = db.Column(db.Integer, nullable=False, default=0)
     ride_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __init__(self, driver_id, passenger_id, zipcode, from_locaton, to_location, price,distance):

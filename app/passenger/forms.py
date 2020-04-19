@@ -26,7 +26,11 @@ class PaymentForm(FlaskForm):
     exp_year = IntegerField('text', validators=[DataRequired()])
     exp_month = IntegerField('text', validators=[DataRequired()])
     payment = IntegerField('text', validators=[DataRequired()])
-    driver_id = HiddenField('text', validators=[DataRequired()])
-    ride_id = HiddenField('text', validators=[DataRequired()])
+    driver_id_field = HiddenField('text', validators=[DataRequired()])
+    ride_id_field = HiddenField('text', validators=[DataRequired()])
     submit = SubmitField('Pay')
+
+class RideRatingForm(FlaskForm):
+    review = TextAreaField('text', validators=[DataRequired()])
+    submit = SubmitField('End Ride')
 
