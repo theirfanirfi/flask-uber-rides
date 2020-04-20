@@ -67,7 +67,7 @@ width: 150px;
                                     {% endif %}
                                 </div>
                                 <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>{{user.name}}</h4></a>
+                                    <a href=""><h4>{{user.name}}</h4></a>
 
                                 </div>
                             </div>
@@ -100,7 +100,7 @@ width: 150px;
                                     {% endif %}
                                 </div>
                                 <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>{{ride.name}}</h4><span style="font-size:12px;color:gray;">[Passenger]</span></a>
+                                    <a href="{{url_for('frontend_blue_print.passenger_profile',passenger_id=ride.passenger_id)}}"><h4>{{ride.name}}</h4><span style="font-size:12px;color:gray;">[Passenger]</span></a>
 
 
                                 </div>

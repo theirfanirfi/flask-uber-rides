@@ -14,6 +14,10 @@ float:left;
   .avatar-pic {
 width: 150px;
 }
+.checked {
+color:orange;
+}
+
 
 
 </style>
@@ -31,125 +35,126 @@ width: 150px;
             <div class="col-lg-12">
 
 
-    <div class="job_details_area">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
+                <div class="job_details_area">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8">
 
-                    <div class="job_details_header">
+                                <div class="job_details_header">
 
-                        <div class="single_jobs white-bg d-flex justify-content-between">
+                                    <div class="single_jobs white-bg d-flex justify-content-between">
 
-                            <div class="jobs_left d-flex align-items-center">
+                                        <div class="jobs_left d-flex align-items-center">
 
-                                <div class="" style="margin-right:10px;">
-                                    {% if user.profile_image == "0" %}
-                                    <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg" class="img-responsive" style="width:80px;" alt="">
-                                    {% else %}
-                                    <img src="{{url_for('static',filename='uploads/'+user.profile_image)}}" class="img-responsive" style="width:80px;" alt="">
-                                    {% endif %}
+                                            <div class="" style="margin-right:10px;">
+                                                {% if user.profile_image == "0" %}
+                                                <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                                     class="img-responsive" style="width:80px;" alt="">
+                                                {% else %}
+                                                <img src="{{url_for('static',filename='uploads/'+user.profile_image)}}"
+                                                     class="img-responsive" style="width:80px;" alt="">
+                                                {% endif %}
+                                            </div>
+                                            <div class="jobs_conetent">
+                                                <a href="#"><h4>{{user.name}} <span
+                                                        style="font-size:12px;">[Passenger]</span></h4></a>
+
+                                                <div class="links_locat d-flex align-items-center">
+                                                    <div class="location">
+                                                        <p><i class="fa fa-map-marker"></i> {{user.country}}</p>
+                                                    </div>
+                                                    <div class="location">
+                                                        <p><i class=""></i>Zipcode: {{user.driver_zipcode}}</p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="jobs_conetent">
-                                    <a href="#"><h4>{{user.name}} <span style="font-size:12px;">[Passenger]</span></h4></a>
+                                <div class="descript_wrap white-bg">
+                                    <div class="single_wrap">
+                                        <h4>Description</h4>
+                                        <p>{{user.profile_description}}</p>
+                                    </div>
 
-                                    <div class="links_locat d-flex align-items-center">
-                                        <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                        </div>
-                                        <div class="location">
-                                            <p> <i class=""></i>Zipcode: {{user.zipcode}}</p>
-                                        </div>
+                                    <div class="comments-area">
+                                        <h4>Reviews</h4>
 
+                                        {% for r in reviews %}
+                                        {% if r.passenger_ratings %}
+                                        <div class="comment-list">
+
+                                            <div class="single-comment justify-content-between d-flex">
+                                                <div class="user justify-content-between d-flex">
+                                                    <div class="thumb">
+                                                        {% if r.profile_image == "0" %}
+                                                        <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                                             alt="">
+                                                        {% else %}
+                                                        <img src="{{url_for('static',filename='uploads/'+r.profile_image)}}"
+                                                             class="img-responsive" style="width:80px;" alt="">
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="desc">
+                                                        <p class="comment">
+                                                            {{r.driver_review_for_passenger}}
+                                                        </p>
+                                                        <div class="d-flex justify-content-between">
+                                                            <div class="d-flex align-items-center">
+                                                                <h5>
+                                                                    <a href="#">{{r.reviewer_name}}</a>
+                                                                </h5>
+                                                                <p class="date">{{r.ride_date}}</p>
+                                                            </div>
+                                                            <!--                                  ratings -->
+                                                            <div class="reply-btn" style="margin-left:12px;">
+                                                                {% for i in range(0,5) %}
+                                                                {% if i+1 <= r.p_ratings %}
+                                                                <span><i class="fa fa-star checked"></i></span>
+                                                                {% else %}
+                                                                <span><i class="fa fa-star"></i></span>
+                                                                {% endif %}
+                                                                {% endfor %}
+                                                                ({{r.p_ratings}})
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="job_sumary">
+                                    <div class="summery_header">
+                                        <h3>Passenger summery</h3>
+                                    </div>
+                                    <div class="job_content">
+                                        <ul>
+                                            <li>Member Since: <span>{{user.member_since}}</span></li>
+                                            <li>Total rides: <span>{{user.total_rides}}</span></li>
+                                            <li>Earned: <span>{{user.total_spent}}$</span></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="descript_wrap white-bg">
-                        <div class="single_wrap">
-                            <h4>Description</h4>
-                            <p>{{user.profile_description}}</p>
-                        </div>
-
-                                       <div class="comments-area">
-                  <h4>Reviews</h4>
-
-
-
-                                            {% for r in reviews %}
-                  <div class="comment-list">
-
-                     <div class="single-comment justify-content-between d-flex">
-                        <div class="user justify-content-between d-flex">
-                           <div class="thumb">
-                               {% if r.profile_image == "0" %}
-                               <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg" alt="">
-                               {% else %}
-                               <img src="{{url_for('static',filename='uploads/'+r.profile_image)}}" class="img-responsive" style="width:80px;" alt="">
-                               {% endif %}
-                           </div>
-                           <div class="desc">
-                              <p class="comment">
-                                  {{r.passenger_review_for_driver}}
-                              </p>
-                              <div class="d-flex justify-content-between">
-                                 <div class="d-flex align-items-center">
-                                    <h5>
-                                       <a href="#">{{r.reviewer_name}}</a>
-                                    </h5>
-                                    <p class="date">{{r.ride_date}}</p>
-                                 </div>
-<!--                                  ratings -->
-                                 <div class="reply-btn">
-                                     {% for i in range(0,5) %}
-                                     {% if i+1 <= r.driver_ratings %}
-                                     <span><i class="fa fa-star checked"></i></span>
-                                     {% else %}
-                                     <span><i class="fa fa-star"></i></span>
-                                     {% endif %}
-                                     {% endfor %}
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                                           {% endfor %}
-               </div>
-                    </div>
-
-
-
-
                 </div>
-                <div class="col-lg-4">
-                    <div class="job_sumary">
-                        <div class="summery_header">
-                            <h3>Passenger Summery</h3>
-                        </div>
-                        <div class="job_content">
-                            <ul>
-                                <li>Member Since: <span>{{user.member_since}}</span></li>
-                                <li>Total rides: <span>{{user.total_rides}}</span></li>
-                                <li>Earned: <span>{{user.total_spent}}$</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+
+
             </div>
+
+
         </div>
     </div>
-
-
-
-            </div>
-
-
-
-
-
-            </div>
-        </div>
     </div>
 </section>
 <!-- ================ contact section end ================= -->

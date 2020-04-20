@@ -256,6 +256,7 @@ def started_ride():
             ride.passenger_review_for_driver = review
             ride.driver_ratings = stars
             ride.isEnded = 1
+            ride.isReviewedByPassenger = 1
             try:
                 db.session.add(ride)
                 db.session.commit()
@@ -264,3 +265,11 @@ def started_ride():
                 return '0' #error occurred in reviewing and ending the ride. Try again.
     else:
         return 'Invalid request'
+
+
+@pb.route('/myrides')
+@login_required
+def my_rides():
+    user = current_user
+    rides = db.engine.execute(text("select * from rides LEFT join users on users.id = rides.driver_id where passenger_id = "+str(user.id)+" and isConfirmed=1 and isStarted=1 and isEnded=1"))
+    return render_template('passenger_my_rides.html', rides=rides,count=get_notifications_count(),user=user)

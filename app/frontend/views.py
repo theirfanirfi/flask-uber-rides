@@ -73,7 +73,7 @@ def logout():
 
 @fp.route('driver/<int:driver_id>')
 def driver_profile(driver_id):
-    sql = text(" select *, users.zipcode as driver_zipcode,"
+    sql = text(" select *, users.zipcode as driver_zipcode, "
                "(select count(*) from rides where driver_id = " + str(driver_id) + " and isEnded=1) as total_rides, "
                                                                                  "(select sum(price) from rides where driver_id = " + str(
         driver_id) + " and isEnded=1) as total_earning "
@@ -85,7 +85,7 @@ def driver_profile(driver_id):
     u = user.first()
 
     reviewsFetchSql = text(
-        "select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.passenger_id "
+        "select *,reviewer.name as reviewer_name,  rides.driver_ratings as d_ratings from rides LEFT join users as reviewer on reviewer.id = rides.passenger_id "
         "where rides.driver_id = " + str(driver_id) + " and isEnded=1;")
     reviews = db.engine.execute(reviewsFetchSql)
     return render_template("frontend_driver_profile.html", user=u, reviews=reviews)
@@ -95,18 +95,18 @@ def driver_profile(driver_id):
 @fp.route('passenger/<int:passenger_id>')
 def passenger_profile(passenger_id):
     sql = text(" select *, users.zipcode as driver_zipcode,"
-               "(select count(*) from rides where driver_id = " + str(passenger_id) + " and isEnded=1) as total_rides, "
-                                                                                 "(select sum(price) from rides where driver_id = " + str(
-        passenger_id) + " and isEnded=1) as total_earning "
+               "(select count(*) from rides where passenger_id = " + str(passenger_id) + " and isEnded=1) as total_rides, "
+                                                                                 "(select sum(price) from rides where passenger_id = " + str(
+        passenger_id) + " and isEnded=1) as total_spent "
                    "from users "
-                   "LEFT JOIN rides on users.id = rides.driver_id "
-                   "WHERE users.id = " + str(passenger_id) + " and roles='Driver'")
+                   "LEFT JOIN rides on users.id = rides.passenger_id "
+                   "WHERE users.id = " + str(passenger_id) + " and roles='Passenger'")
 
     user = db.engine.execute(sql)
     u = user.first()
 
     reviewsFetchSql = text(
-        "select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.passenger_id "
-        "where rides.driver_id = " + str(passenger_id) + " and isEnded=1;")
+        "select *,reviewer.name as reviewer_name, rides.passenger_ratings as p_ratings from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
+        "where rides.passenger_id = " + str(passenger_id) + " and isEnded=1;")
     reviews = db.engine.execute(reviewsFetchSql)
-    return render_template("frontend_driver_profile.html", user=u, reviews=reviews)
+    return render_template("frontend_passenger_profile.html", user=u, reviews=reviews)
