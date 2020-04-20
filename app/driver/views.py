@@ -101,7 +101,8 @@ def upload_profile_image():
 	imageForm = UploadProfileImageForm()
 	user = current_user
 	form.email.data = user.email
-	form.fullname.data = user.fullname
+	form.name.data = user.name
+	form.surname.data = user.surname
 	form.zipcode.data = user.zipcode
 	form.gender.data = "Male"
 

@@ -51,15 +51,22 @@ def finddriver():
     calculated_price = distance_in_km * PRICE
     stars = 3
     drivers = ''
-
+    user = current_user
     if form.validate_on_submit():
-        drivers = User.query.filter_by(roles="Driver", zipcode=current_user.zipcode).all()
-        if not len(drivers) > 0:
-            drivers = User.query.filter_by(roles="Driver").all()
+        if not int(user.zipcode) > 0:
+            return 'please update your zipcode first'
+
+        drivers = db.engine.execute(text("select *, users.profile_image as driver_profile_image, avg(driver_ratings) as avg_ratings, rides.id as ride_id, users.id as user_driver_id,users.zipcode as driver_zipcode from users LEFT join rides on rides.driver_id = users.id where roles='Driver' and users.zipcode = "+str(user.zipcode)))
+
+        if not drivers.scalar():
+            drivers = db.engine.execute(text("select *,users.profile_image as driver_profile_image, max(driver_ratings) as top_rated, avg(driver_ratings) as avg_ratings, rides.id as ride_id, users.id as user_driver_id,users.zipcode as driver_zipcode from users LEFT join rides on rides.driver_id = users.id where roles='Driver' and users.zipcode > 0 order by top_rated"))
+
 
         return render_template('pass_driver_found.html', drivers=drivers, distance=distance_in_km,
-                               price=calculated_price, form=form, stars=stars, from_loc=form.from_loc.data,
+                               price=calculated_price, form=form, from_loc=form.from_loc.data,
                                to_loc=form.to_loc.data, count=get_notifications_count())
+
+
     else:
         return 'form not validate'
 
@@ -217,6 +224,11 @@ def pay_ride(ride_id):
             return 'ride started'
         except Exception as e:
             return 'error'
+        finally:
+            decline_all_other_rides = db.engine.execute(
+                text("UPDATE rides set isConfirmed=3, isStarted=2 WHERE passenger_id = "
+                     + str(user.id) + " and isConfirmed=0 and isEnded=0 and isPaid=0 and isStarted=0;"))
+            return redirect("/passenger/started")
     else:
         return 'Invalid request'
 

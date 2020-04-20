@@ -51,11 +51,11 @@
                                     {% if d.profile_image == "0" %}
                                     <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"  class="img-responsive" style="width:70px;margin-right:16px;" alt="">
                                     {% else %}
-                                    <img src="{{url_for('static',filename='uploads/'+d.profile_image)}}" style="width:70px;margin-right:16px;" alt="">
+                                    <img src="{{url_for('static',filename='uploads/'+d.driver_profile_image)}}" style="width:70px;margin-right:16px;" alt="">
                                     {% endif %}
                                 </div>
                                 <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>{{d.name}}
+                                    <a href="{{url_for('frontend_blue_print.driver_profile',driver_id=d.user_driver_id)}}"><h4>{{d.name}}
                                         - <span style="font-weight:normal;color:gray;font-size:14px;">{{distance}} KMs away</span></h4> </a>
                                     <div class="links_locat d-flex align-items-center">
                                         <div class="location">
@@ -66,20 +66,29 @@
                                         &nbsp;
                                         &nbsp;
                                         <div class="location">
-                                            <p><span style="font-weight:bold;">Zipcode: </span> {{d.zipcode}}</p>
+                                            <p><span style="font-weight:bold;">Zipcode: </span> {{d.driver_zipcode}}</p>
                                         </div>
 
                                     </div>
 
                                     <p style="margin-left:6px;">
+                                        {% if d.avg_ratings %}
                                         {% for i in range(5) %}
-                                        {% if i+1 <= stars %}
+                                        {% if i+1 <= d.avg_ratings %}
                                         <span class="fa fa-star checked"></span>
                                         {% else %}
                                         <span class="fa fa-star"></span>
                                         {% endif %}
                                         {% endfor %}
-                                        &nbsp; ({{stars}})
+                                        &nbsp; ({{d.avg_ratings}})
+                                        {%else %}
+                                        {% for i in range(5) %}
+
+                                        <span class="fa fa-star"></span>
+
+                                        {% endfor %}
+                                        &nbsp; ({{0}})
+                                        {% endif%}
                                     </p>
 
                                 </div>
@@ -88,7 +97,7 @@
                                 <div class="apply_now">
 
                                     <a url="{{url_for('passenger_bp.send_booking_request',
-                                     driver_id=d.id)}}" class="boxed-btn3 link">Send booking request</a>
+                                     driver_id=d.user_driver_id)}}" class="boxed-btn3 link">Send booking request</a>
                                 </div>
                             </div>
                         </div>
