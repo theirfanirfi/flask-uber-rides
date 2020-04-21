@@ -15,6 +15,11 @@ float:left;
 width: 150px;
 }
 
+.checked {
+color:orange;
+}
+
+
 
 </style>
 <!-- ================ contact section start ================= -->
@@ -29,92 +34,129 @@ width: 150px;
 
         <div class="row">
             <div class="col-lg-12">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                    <li class="alert alert-info">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
-
-
-                    <!-- job_listing_area_start  -->
-    <div class="job_listing_area" style="background-color:white;">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="section_title">
-                        <h3>My Rides</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="job_lists">
-                <div class="row">
 
 
 
-                    <div class="col-lg-12 col-md-12">
-                        <div class="single_jobs white-bg d-flex justify-content-between">
-                            <div class="col-md-6">
-                            <div class="jobs_left d-flex align-items-center">
-                                <div class="thumb">
-                                    <img src="img/svg_icon/2.svg" alt="">
-                                </div>
-                                <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                                    <div class="links_locat d-flex align-items-center">
-                                        <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                        </div>
-                                        <div class="location">
-                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                        </div>
-                                    </div>
+                <!-- job_listing_area_start  -->
+                <div class="job_listing_area" style="background-color:white;">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6">
+                                <div class="section_title">
+                                    <h3>My Rides</h3>
                                 </div>
                             </div>
                         </div>
-                            <div class="col-md-6">
+                        <div class="job_lists">
+                            <div class="row">
 
-                            <div class="jobs_right">
 
+                                                            {% for ride in rides %}
+                                <div class="col-lg-12 col-md-12">
+                                    <div class="single_jobs white-bg d-flex justify-content-between">
+                                        <div class="col-md-4">
+                                            <div class="jobs_left d-flex align-items-center">
+                                                <div class="">
+                                                    {% if user.profile_image == "0" %}
+                                                    <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                                         class="img-responsive" style="width:80px;margin-right:12px;"
+                                                         alt="">
+                                                    {% else %}
+                                                    <img src="{{url_for('static',filename='uploads/'+user.profile_image)}}"
+                                                         class="img-responsive" style="width:80px;margin-right:12px;"
+                                                         alt="">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="jobs_conetent">
+                                                    <a href=""><h4>{{user.name}}</h4></a>
 
-                                <div class=" pull-left">
-                                    <img style="width:80px;margin-left:10px;margin-right:12px;" src="{{url_for('static',filename='uploads/46784605_1309528232522621_5745119177648111616_o.jpg')}}" alt="">
-                                </div>
-                                <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>Digital Marketer </h4><span>[Passenger]</span></a>
-                                    <div class="links_locat d-flex align-items-center">
-                                        <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="location">
-                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
+                                        <div class="col-md-4">
+                                            <div class="links_locat d-flex align-items-center">
+                                                <div class="location">
+                                                    <p><i class="fa fa-map"></i> Distance: {{ride.distance}}KMs</p>
+                                                </div>
+                                                &nbsp;&nbsp;
+                                                <div class="location">
+                                                    <p> $ {{ride.price}}</p>
+                                                </div>
+
+                                            </div>
+                                            {% if ride.isReviewedByPassenger == 1 %}
+
+                                            <p><b>Passenger:</b> {{ride.passenger_review_for_driver}}</p>
+                                            <div style="margin-left:6px;" class="reply-btn">
+                                                {% for i in range(0,5) %}
+                                                {% if i+1 <= ride.passenger_ratings %}
+                                                <span><i class="fa fa-star checked"></i></span>
+                                                {% else %}
+                                                <span><i class="fa fa-star"></i></span>
+                                                {% endif %}
+                                                {% endfor %}
+                                                ({{ride.passenger_ratings}})
+
+
+                                            </div>
+                                            {% endif %}
+
+                                            {% if ride.isReviewedByDriver == 1 %}
+                                            <p><b>Driver:</b> {{ride.driver_review_for_passenger}}</p>
+                                            <div style="margin-left:6px;" class="reply-btn">
+                                                {% for i in range(0,5) %}
+                                                {% if i+1 <= ride.passenger_ratings %}
+                                                <span><i class="fa fa-star checked"></i></span>
+                                                {% else %}
+                                                <span><i class="fa fa-star"></i></span>
+                                                {% endif %}
+                                                {% endfor %}
+                                                ({{ride.driver_rating_for_pass}})
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4">
+
+                                            <div class="jobs_right">
+
+
+                                                <div class=" pull-left">
+                                                    {% if ride.profile_image == "0" %}
+                                                    <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                                         class="img-responsive" style="width:80px;margin-right:12px;"
+                                                         alt="">
+                                                    {% else %}
+                                                    <img src="{{url_for('static',filename='uploads/'+ride.profile_image)}}"
+                                                         class="img-responsive" style="width:80px;margin-right:12px;"
+                                                         alt="">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="jobs_conetent">
+                                                    <a href="{{url_for('frontend_blue_print.driver_profile',driver_id=ride.driver_id)}}">
+                                                        <h4>{{ride.name}}</h4><span
+                                                            style="font-size:12px;color:gray;">[Passenger]</span></a>
+
+
+                                                </div>
+
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-
-
+                                {% endfor %}
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
+                <!-- job_listing_area_end  -->
+
+
             </div>
+
+
         </div>
     </div>
-    <!-- job_listing_area_end  -->
-
-
-            </div>
-
-
-
-
-
-            </div>
-        </div>
     </div>
 </section>
 <!-- ================ contact section end ================= -->

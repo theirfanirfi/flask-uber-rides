@@ -1,4 +1,4 @@
-{% extends 'pass_masterlayout.html' %}
+{% extends 'driver_masterlayout.html' %}
 
 {% block body %}
 
@@ -102,14 +102,7 @@ color:orange;
 
         <div class="row">
             <div class="col-lg-12">
-
-
-
-                <!-- job_listing_area_start  -->
-                <div class="job_listing_area" style="background-color:white;">
-                    <div class="container">
-                        <div class="row align-items-center">
-                                            {% with messages = get_flashed_messages() %}
+                {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <ul class=flashes>
                     {% for message in messages %}
@@ -118,6 +111,12 @@ color:orange;
                 </ul>
                 {% endif %}
                 {% endwith %}
+
+
+                <!-- job_listing_area_start  -->
+                <div class="job_listing_area" style="background-color:white;">
+                    <div class="container">
+                        <div class="row align-items-center">
                             <div class="col-lg-6">
                                 <div class="section_title">
                                     <h3>Current ride</h3>
@@ -165,19 +164,19 @@ color:orange;
 
 
                                                 <div class=" pull-left">
-                                                    {% if driver.profile_image == "0" %}
+                                                    {% if passenger.profile_image == "0" %}
                                                     <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
                                                          class="img-responsive" style="width:80px;margin-right:12px;"
                                                          alt="">
                                                     {% else %}
-                                                    <img src="{{url_for('static',filename='uploads/'+driver.profile_image)}}"
+                                                    <img src="{{url_for('static',filename='uploads/'+passenger.profile_image)}}"
                                                          class="img-responsive" style="width:80px;margin-right:12px;"
                                                          alt="">
                                                     {% endif %}
                                                 </div>
                                                 <div class="jobs_conetent">
-                                                    <a href="job_details.html"><h4>{{driver.name}}</h4><span
-                                                            style="font-size:12px;color:gray;">[Driver]</span></a>
+                                                    <a href="job_details.html"><h4>{{passenger.name}}</h4><span
+                                                            style="font-size:12px;color:gray;">[Passenger]</span></a>
 
 
                                                 </div>
@@ -349,7 +348,7 @@ setInterval(updateTime, 100)
 {% block customscript %}
 <script>
 stars = 0;
-var url = "http://localhost:5000/passenger/started";
+var url = "http://localhost:5000/driver/started";
 $('.stars').click(function(){
 var star = $(this);
 $('.stars').removeClass('checked');
@@ -370,7 +369,7 @@ alert('no such ride found to end');
 alert('error occurred in ending the ride, please try again');
 }else if(data == "1"){
 alert('ride ended.');
-window.location.href="http://localhost:5000/passenger/"
+window.location.href="http://localhost:5000/driver/"
 }
 });
 });

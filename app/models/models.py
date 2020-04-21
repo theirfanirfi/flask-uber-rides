@@ -74,8 +74,8 @@ class Ride(db.Model):
     passenger_ratings = db.Column(db.Integer, nullable=True)
     # will be updated when ride ends
     driver_ratings = db.Column(db.Integer, nullable=True)
-    passenger_ratings = db.Column(db.Integer, nullable=True)
-    distance = db.Column(db.Integer, nullable=False)
+    passenger_ratings = db.Column(db.Integer, default=0)
+    distance = db.Column(db.Integer, default=0)
     driver_review_for_passenger = db.Column(
         db.String(255), nullable=True)  # will be updated when ride ends
     passenger_review_for_driver = db.Column(

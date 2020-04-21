@@ -3,84 +3,148 @@
 {% block body %}
 
 
-
-    <!-- catagory_area -->
-    <div class="catagory_area">
-        <div class="container">
-            <div class="row cat_search">
-                <div class="col-lg-4 col-md-4">
-                    <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
+<!-- catagory_area -->
+<div class="catagory_area">
+    <div class="container">
+        <div class="row cat_search">
+            <div class="col-lg-4 col-md-4">
+                <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
                     <div class="single_input">
-<!--                        <input type="location" placeholder="From">-->
+                        <!--                        <input type="location" placeholder="From">-->
                         {{form.from_loc(placeholder='From location')}}
                     </div>
-                </div>
-
-                                <div class="col-lg-4 col-md-4">
-                    <div class="single_input">
-                        {{form.to_loc(placeholder='to location')}}
-
-                    </div>
-                </div>
-
-
-                <div class="col-lg-4 col-md-12">
-                    <div class="job_btn">
-                            {{ form.csrf_token }}
-                        {{form.submit(class_='boxed-btn3',style='width:100%')}}
-                    </div>
-                </div>
-                </form>
             </div>
 
+            <div class="col-lg-4 col-md-4">
+                <div class="single_input">
+                    {{form.to_loc(placeholder='to location')}}
+
+                </div>
+            </div>
+
+
+            <div class="col-lg-4 col-md-12">
+                <div class="job_btn">
+                    {{ form.csrf_token }}
+                    {{form.submit(class_='boxed-btn3',style='width:100%')}}
+                </div>
+            </div>
+            </form>
         </div>
+
     </div>
-    <!--/ catagory_area -->
+</div>
+<!--/ catagory_area -->
 
 <div class="container">
     <div class="row">
+                            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul class=flashes>
+                    {% for message in messages %}
+                    <li class="alert alert-danger">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
         <h1>Recent Rides</h1>
-        <div class="col-md-12">
 
-            {% for d in drivers %}
-            <div class="col-lg-12 col-md-12">
-                        <div class="single_jobs white-bg d-flex justify-content-between">
-                            <div class="jobs_left d-flex align-items-center">
-                                <div class="thumb">
-                                    <img src="img/svg_icon/1.svg" alt="">
-                                </div>
-                                <div class="jobs_conetent">
-                                    <a href="job_details.html"><h4>Software Engineer</h4></a>
-                                    <div class="links_locat d-flex align-items-center">
-                                        <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                        </div>
-                                        <div class="location">
-                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="jobs_right">
-                                <div class="apply_now">
-                                    <a class="heart_mark" href="#"> <i class="ti-heart"></i> </a>
-                                    <a href="job_details.html" class="boxed-btn3">Apply Now</a>
-                                </div>
-                                <div class="date">
-                                    <p>Date line: 31 Jan 2020</p>
-                                </div>
-                            </div>
+
+        {% for ride in rides %}
+        <div style="margin-top:22px;" class="col-lg-12 col-md-12">
+            <div class="single_jobs white-bg d-flex justify-content-between">
+                <div class="col-md-4">
+                    <div class="jobs_left d-flex align-items-center">
+                        <div class="">
+                            {% if user.profile_image == "0" %}
+                            <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                 class="img-responsive" style="width:80px;margin-right:12px;"
+                                 alt="">
+                            {% else %}
+                            <img src="{{url_for('static',filename='uploads/'+user.profile_image)}}"
+                                 class="img-responsive" style="width:80px;margin-right:12px;"
+                                 alt="">
+                            {% endif %}
+                        </div>
+                        <div class="jobs_conetent">
+                            <a href=""><h4>{{user.name}}</h4></a>
+
                         </div>
                     </div>
-            {% endfor %}
+                </div>
+                <div class="col-md-4">
+                    <div class="links_locat d-flex align-items-center">
+                        <div class="location">
+                            <p><i class="fa fa-map"></i> Distance: {{ride.distance}}KMs</p>
+                        </div>
+                        &nbsp;&nbsp;
+                        <div class="location">
+                            <p> $ {{ride.price}}</p>
+                        </div>
+
+                    </div>
+                    {% if ride.isReviewedByPassenger == 1 %}
+
+                    <p><b>Passenger:</b> {{ride.passenger_review_for_driver}}</p>
+                    <div style="margin-left:6px;" class="reply-btn">
+                        {% for i in range(0,5) %}
+                        {% if i+1 <= ride.pass_rating_for_driver %}
+                        <span><i class="fa fa-star checked"></i></span>
+                        {% else %}
+                        <span><i class="fa fa-star"></i></span>
+                        {% endif %}
+                        {% endfor %}
+                        ({{ride.pass_rating_for_driver}})
 
 
+                    </div>
+                    {% endif %}
+
+                    {% if ride.isReviewedByDriver == 1 %}
+                    <p><b>Driver:</b> {{ride.driver_review_for_passenger}}</p>
+                    <div style="margin-left:6px;" class="reply-btn">
+                        {% for i in range(0,5) %}
+                        {% if i+1 <= ride.passenger_ratings %}
+                        <span><i class="fa fa-star checked"></i></span>
+                        {% else %}
+                        <span><i class="fa fa-star"></i></span>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+
+                    <div class="jobs_right">
+
+
+                        <div class=" pull-left">
+                            {% if ride.profile_image == "0" %}
+                            <img src="https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg"
+                                 class="img-responsive" style="width:80px;margin-right:12px;"
+                                 alt="">
+                            {% else %}
+                            <img src="{{url_for('static',filename='uploads/'+ride.profile_image)}}"
+                                 class="img-responsive" style="width:80px;margin-right:12px;"
+                                 alt="">
+                            {% endif %}
+                        </div>
+                        <div class="jobs_conetent">
+                            <a href="{{url_for('frontend_blue_print.driver_profile',driver_id=ride.driver_id)}}">
+                                <h4>{{ride.name}}</h4><span
+                                    style="font-size:12px;color:gray;">[Driver]</span></a>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
         </div>
+        {% endfor %}
     </div>
 </div>
-
-
-
 
 
 {% endblock %}

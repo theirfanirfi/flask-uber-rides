@@ -1,4 +1,4 @@
-{% extends 'driver_masterlayout.html' %}
+{% extends 'pass_masterlayout.html' %}
 
 {% block body %}
 
@@ -28,7 +28,13 @@ width: 150px;
 
         <div class="row">
             <div class="col-lg-12">
-                {% with messages = get_flashed_messages() %}
+
+
+                    <!-- job_listing_area_start  -->
+    <div class="job_listing_area" style="background-color:white;">
+        <div class="container">
+            <div class="row align-items-center">
+                                {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <ul class=flashes>
                     {% for message in messages %}
@@ -38,11 +44,6 @@ width: 150px;
                 {% endif %}
                 {% endwith %}
 
-
-                    <!-- job_listing_area_start  -->
-    <div class="job_listing_area" style="background-color:white;">
-        <div class="container">
-            <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="section_title">
                         <h3>Notifications</h3>

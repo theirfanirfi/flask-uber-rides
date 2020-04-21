@@ -22,6 +22,9 @@ def login():
     if request.method == 'POST':
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
+            if not user:
+                flash('Invalid Credentials')
+                return redirect("/login")
             if user.check_password(form.password.data) and user is not None:
                 login_user(user)
                 flash('You are logged in. ')
@@ -30,7 +33,8 @@ def login():
                 else:
                     return redirect('/passenger')
             else:
-                return 'Invalid credentials'
+                flash('Invalid Credentials')
+                return redirect("/login")
         else:
             return render_template('login.html', form=form)
     elif request.method == 'GET':
