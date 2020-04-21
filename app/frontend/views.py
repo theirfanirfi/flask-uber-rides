@@ -56,7 +56,7 @@ def register():
             else:
                 role = "Driver"
 
-            user = User(name=form.name.data,surname=form.surname.data,email=form.email.data,password=form.password.data,roles=role,gender=form.gender.data)
+            user = User(name=form.name.data,surname=form.surname.data,email=form.email.data,country=form.country.data,password=form.password.data,roles=role,gender=form.gender.data)
             db.session.add(user)
             try:
                 db.session.commit()

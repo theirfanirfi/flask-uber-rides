@@ -15,6 +15,7 @@ class RegisterationForm(FlaskForm):
     name = StringField('text',validators=[DataRequired()])
     surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    country = StringField('Country', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Password & Confirm password must match!')])
     pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
     zipcode = StringField('text')

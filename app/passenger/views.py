@@ -32,14 +32,6 @@ def hasStartedRide(user):
     else:
         return False
 
-
-# @application.context_processor
-# @login_required
-# def inject_dict_for_all_templates():
-# 	notifications_count = db.engine.execute("select count(*) from rides where passenger_id ="+str(current_user.id)+" and isConfirmed=1 and isStarted = 0 and isPaid = 0 and isEnded =0")
-# 	c = str(notifications_count.first()[0])
-# 	return dict(count=c)
-
 def get_notifications_count():
     notifications_count = db.engine.execute("select count(*) from rides where passenger_id =" + str(
         current_user.id) + " and isConfirmed=1 and isStarted = 0 and isPaid = 0 and isEnded =0")
@@ -160,6 +152,7 @@ def update_profile():
                 update_user.name = form.name.data
                 update_user.surname = form.surname.data
                 update_user.zipcode = form.zipcode.data
+                update_user.country = form.country.data
                 update_user.gender = form.gender.data
                 update_user.email = form.email.data
                 update_user.profile_description = form.profiledescription.data
@@ -179,6 +172,7 @@ def update_profile():
             form.email.data = user.email
             form.name.data = user.name
             form.surname.data = user.surname
+            form.country.data = user.country
             form.zipcode.data = user.zipcode
             form.profiledescription.data = user.profile_description
             return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,

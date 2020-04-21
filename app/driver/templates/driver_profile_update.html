@@ -1,5 +1,7 @@
 {% extends 'driver_masterlayout.html' %}
-
+{% block title %}
+Update Profile
+{% endblock %}
 {% block body %}
 
 <style>
@@ -75,6 +77,17 @@ width: 150px;
                                 {% endif %}
                             </div>
                         </div>
+
+                                                <div class="col-sm-6">
+                            <div class="form-group">
+                                <label style="font-weight:bold;">Country</label>
+                                {{form.country(placeholder='Country',class_='form-control')}}
+                                {% if form.country.errors %}
+                                <p style="color:red;"> {{ form.country.errors[0] }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label style="font-weight:bold;">Zipcode</label>

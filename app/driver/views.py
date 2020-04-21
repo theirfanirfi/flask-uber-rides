@@ -91,6 +91,7 @@ def update_profile():
                 update_user.zipcode = form.zipcode.data
                 update_user.gender = form.gender.data
                 update_user.email = form.email.data
+                update_user.country = form.country.data
                 update_user.profile_description = form.profiledescription.data
                 try:
                     db.session.add(update_user)
@@ -109,6 +110,7 @@ def update_profile():
             form.name.data = user.name
             form.surname.data = user.surname
             form.zipcode.data = user.zipcode
+            form.country.data = user.country
             form.profiledescription.data = user.profile_description
             return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
                                    count=get_notifications_count(),started_ride=hasStartedRide(user))
@@ -125,6 +127,7 @@ def upload_profile_image():
     form.name.data = user.name
     form.surname.data = user.surname
     form.zipcode.data = user.zipcode
+    form.country.data = user.country
     form.gender.data = "Male"
 
     if imageForm.validate_on_submit():

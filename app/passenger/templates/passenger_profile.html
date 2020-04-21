@@ -1,5 +1,7 @@
 {% extends 'pass_masterlayout.html' %}
-
+{% block title %}
+My Profile
+{% endblock %}
 {% block body %}
 
 <style>
@@ -63,7 +65,7 @@ width: 150px;
 
                                     <div class="links_locat d-flex align-items-center">
                                         <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                            <p> <i class="fa fa-map-marker"></i> {{user.country}}</p>
                                         </div>
                                         <div class="location">
                                             <p> <i class=""></i>Zipcode: {{user.zipcode}}</p>

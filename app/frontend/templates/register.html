@@ -33,6 +33,17 @@
                                         {% endif %}
                                     </div>
                                 </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="input_field">
+                                       {{form.country(placeholder='Country')}}
+                                        {% if form.country.errors %}
+                                        <p style="color:red;">{{ form.country.errors[0] }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12">
                                     <div class="input_field">
                                         {{form.zipcode(placeholder='Zip code (Optional)')}}

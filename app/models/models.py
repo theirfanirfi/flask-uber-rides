@@ -25,10 +25,11 @@ class User(db.Model,UserMixin):
     passengers = db.relationship('Ride', foreign_keys="[Ride.passenger_id]")
     drivers = db.relationship('Ride', foreign_keys="[Ride.driver_id]")
 
-    def __init__(self, name, surname, email, password, roles, gender):
+    def __init__(self, name, surname, email,country, password, roles, gender):
         self.name = name
         self.surname = surname
         self.email = email
+        self.country = country
         self.password = generate_password_hash(password)
         self.roles = roles
         self.gender = gender

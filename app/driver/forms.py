@@ -16,6 +16,7 @@ class ProfileForm(FlaskForm):
     name = StringField('text',validators=[DataRequired()])
     surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    country = StringField('Country', validators=[DataRequired()])
     zipcode = StringField('text',validators=[DataRequired()])
     gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
     submit = SubmitField('Update Profile')
