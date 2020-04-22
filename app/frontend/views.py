@@ -60,9 +60,11 @@ def register():
             db.session.add(user)
             try:
                 db.session.commit()
-                return 'Thank you for registeration. Please go to login page and login.'
+                flash('Registeration successful, please login to continue.')
+                return redirect("/login")
             except:
-                return 'Error occurred during registeration. Please try again.'
+                flash('Error occurred during registeration. Please try again.')
+                return redirect(request.referrer)
         else:
             # return 'not validate'
             return render_template('register.html', form=form)
