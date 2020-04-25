@@ -26,7 +26,9 @@ def login():
                 return redirect("/login")
             if user.check_password(form.password.data) and user is not None:
                 login_user(user)
-                flash('You are logged in. ','success')
+                if not user.zipcode == 0:
+                    flash('','zipcode')
+
                 if user.roles == "Driver":
                     return redirect('/driver')
                 else:

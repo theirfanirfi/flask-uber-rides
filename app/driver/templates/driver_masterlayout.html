@@ -26,80 +26,103 @@
     #bootstrapnav li a:hover {
         color:black;
     }
+
+
     </style>
 </head>
 
 <body>
-    
 
-    <!-- header-start -->
-    <header>
-         <nav class="navbar navbar-expand-lg navbar-light bg-light"style="position:fixed;z-index:1;width:100%;" >
-  <a class="navbar-brand" href="#">Ride</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-     <li class="nav-item">
-      <a class="nav-link" href="/driver/">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{{url_for('driver_bp.my_rides')}}">My Rides</a>
-    </li>
-          <li class="nav-item">
-      <a class="nav-link" href="{{url_for('driver_bp.profile')}}">Profile</a>
-    </li>
+<!-- header-start -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;z-index:1;width:100%;">
+        <a class="navbar-brand" href="#">Ride</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <li class="nav-item">
-      <a class="nav-link" href="/logout">Logout</a>
-    </li>
-    </ul>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/driver/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('driver_bp.my_rides')}}">My Rides</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('driver_bp.profile')}}">Profile</a>
+                </li>
 
-  </div>
-</nav>
-    </header>
-    <!-- header-end -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</header>
+<!-- header-end -->
 <div class="container" style="position:absolute;z-index:1;margin-top:20px;">
-<div class="row">
-<div class="col-md-6"></div>
+    <div class="row">
+        <div class="col-md-6"></div>
 
 
+        <div class="col-md-6">
 
-<div class="col-md-6">
+            {% with messages = get_flashed_messages(category_filter=['success','danger'],with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-<div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
- {{message}}
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-                    {% endfor %}
-                {% endif %}
-                {% endwith %}
-
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
 
 
-{% if zipcode_updated %}
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-<p>Update your zipcode</p>
-<form method="get" action="{{url_for('driver_bp.update_zipcode')}}">
-<label>Zipcode: </label>
-<input type="number" name="zipcode" class="form-control" placeholder="Zipcode" /><br/>
-<button type="submit" class="btn btn-primary">Update</button>
-</form>
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
+                {% with messages = get_flashed_messages(category_filter=["zipcode"]) %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <p>Do you want to update your zipcode?</p>
+                <form method="get" action="{{url_for('driver_bp.update_zipcode')}}">
+                    <label>Zipcode: </label>
+                    <input type="number" name="zipcode" class="form-control" value="{{current_user.zipcode}}"
+                           placeholder="Zipcode"/><br/>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-</div>
-</div>
+            {% if zipcode_updated %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <p>Update your zipcode</p>
+                <form method="get" action="{{url_for('driver_bp.update_zipcode')}}">
+                    <label>Zipcode: </label>
+                    <input type="number" name="zipcode" class="form-control" placeholder="Zipcode"/><br/>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
 </div>
 
 {% block body %}
@@ -107,17 +130,16 @@
 {% endblock %}
 
 
-       <!-- link that opens popup -->
-    <!-- JS here -->
+<!-- link that opens popup -->
+<!-- JS here -->
 
-    <script src="{{ url_for('static', filename='js/vendor/jquery-1.12.4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/jquery-1.12.4.min.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
 
 
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 {% block customscript %}
 
