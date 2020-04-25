@@ -12,7 +12,6 @@ import os
 # images = UploadSet('images', IMAGES)
 
 class ProfileForm(FlaskForm):
-    profiledescription = TextAreaField('Describe yourself', validators=[DataRequired()])
     name = StringField('text',validators=[DataRequired()])
     surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -26,14 +25,14 @@ class ProfileForm(FlaskForm):
             raise ValidationError("The email is already taken")
 
 class UploadProfileImageForm(FlaskForm):
-    image = FileField(validators=[FileRequired(),  FileAllowed(['jpg','png','jpeg'], 'Images only!')])
+    image = FileField(validators=[FileRequired()])
     submit = SubmitField('Upload Profile Image')
 
-    def validate_image(self, field):
-        folder = os.path.join(application.root_path, 'static/uploads/')
-        file_path = os.path.join(folder, field.data.filename)
-        if os.path.isfile(file_path):
-            raise ValidationError("Image with the same name already exists.")
+    # def validate_image(self, field):
+    #     folder = os.path.join(application.root_path, 'static/uploads/')
+    #     file_path = os.path.join(folder, field.data.filename)
+    #     if os.path.isfile(file_path):
+    #         raise ValidationError("Image with the same name already exists.")
 
 class ZipCodeForm(FlaskForm):
     zipcode = IntegerField('number',validators=[DataRequired(), Regexp(regex=r'^\d+$')])

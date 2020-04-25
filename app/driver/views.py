@@ -65,14 +65,13 @@ def update_profile():
         imageForm = UploadProfileImageForm()
         if request.method == "POST":
             if form.validate_on_submit():
+
                 update_user = User.query.filter_by(id=user.id).first()
                 update_user.name = form.name.data
                 update_user.surname = form.surname.data
                 update_user.zipcode = form.zipcode.data
-                #update_user.gender = form.gender.data
                 update_user.email = form.email.data
                 update_user.country = form.country.data
-                update_user.profile_description = form.profiledescription.data
                 try:
                     db.session.add(update_user)
                     db.session.commit()
@@ -90,7 +89,6 @@ def update_profile():
             form.surname.data = user.surname
             form.zipcode.data = user.zipcode
             form.country.data = user.country
-            form.profiledescription.data = user.profile_description
             return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,zipcode_updated=has_zipcode_been_updated(user))
 
 
@@ -111,6 +109,11 @@ def upload_profile_image():
     if imageForm.validate_on_submit():
         file = imageForm.image.data
         image = secure_filename(file.filename)
+        file_ext = image.split('.')[1]
+        if not (file_ext == 'jpeg' or file_ext == 'png' or file_ext == 'jpg'):
+            flash('Invalid file, only images can be uploaded','danger')
+            return redirect("/driver/updateprofile")
+
         folder = os.path.join(application.root_path, 'static/uploads/')
         file_path = os.path.join(folder, image)
         try:
