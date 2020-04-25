@@ -87,7 +87,7 @@
 
 
                 {% with messages = get_flashed_messages(category_filter=["zipcode"]) %}
-        {% if messages %}
+        {% if messages and not current_user.zipcode == 0 %}
             <ul class=flashes>
                 {% for message in messages %}
                               <div class="alert alert-warning alert-dismissible fade show" role="alert">
