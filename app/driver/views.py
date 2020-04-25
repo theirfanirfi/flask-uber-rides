@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, redirect, request, flash
 from flask_login import login_required, current_user, confirm_login
-from sqlalchemy import text
+from sqlalchemy import text, func
 from werkzeug.utils import secure_filename
 from app import application, db
 from app.models.models import *
@@ -22,18 +22,11 @@ def isDriver():
     if not user.roles == "Passenger":
         return redirect("/logout")
 
-def hasStartedRide(user):
-    ride = Ride.query.filter_by(driver_id=user.id,isConfirmed=1, isPaid=1, isEnded=0).first()
-    if ride:
+def has_zipcode_been_updated(user):
+    if user.zipcode == 0:
         return True
     else:
         return False
-
-def get_notifications_count():
-    notifications_count = db.engine.execute("select count(*) from rides where driver_id =" + str(
-        current_user.id) + " and isConfirmed=0 and isStarted = 0 and isPaid = 0 and isEnded =0")
-    c = str(notifications_count.first()[0])
-    return c
 
 
 @driveblueprint.route('/')
@@ -43,7 +36,7 @@ def index():
     if not User.is_driver(user):
         return redirect('/logout')
     else:
-        return render_template('driver_index.html', count=get_notifications_count(),started_ride=hasStartedRide(user))
+        return render_template('driver_index.html', zipcode_updated=has_zipcode_been_updated(user))
 
 
 @driveblueprint.route('/profile')
@@ -52,23 +45,10 @@ def profile():
     isDriver()
     loggedin_user= current_user
     user_id = loggedin_user.id
-    sql = text(" select *, "
-               "(select count(*) from rides where driver_id = " + str(user_id) + " and isEnded=1) as total_rides, "
-                                                                                 "(select sum(price) from rides where driver_id = " + str(
-        user_id) + " and isEnded=1) as total_earning "
-                   "from users "
-                   "LEFT JOIN rides on users.id = rides.driver_id "
-                   "WHERE users.id = " + str(user_id) + ";")
-
-    user = db.engine.execute(sql)
-    u = user.first()
-
-    reviewsFetchSql = text(
-        "select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.passenger_id "
-        "where rides.driver_id = " + str(user_id) + " and isEnded=1;")
-    reviews = db.engine.execute(reviewsFetchSql)
-
-    return render_template('driver_profile.html', user=u, reviews=reviews, count=get_notifications_count(),started_ride=hasStartedRide(loggedin_user))
+    total_rides = Ride.query.filter_by(driver_id=loggedin_user.id).count()
+    spent = Ride.query.with_entities(func.sum(Ride.price).label('spent')).filter_by(driver_id=loggedin_user.id).all()
+    reviews = db.session.query(Ride).join(User, User.id == Ride.driver_id).all()
+    return render_template('driver_profile.html', user=loggedin_user, reviews=reviews, zipcode_updated=has_zipcode_been_updated(loggedin_user))
 
 
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
@@ -89,22 +69,21 @@ def update_profile():
                 update_user.name = form.name.data
                 update_user.surname = form.surname.data
                 update_user.zipcode = form.zipcode.data
-                update_user.gender = form.gender.data
+                #update_user.gender = form.gender.data
                 update_user.email = form.email.data
                 update_user.country = form.country.data
                 update_user.profile_description = form.profiledescription.data
                 try:
                     db.session.add(update_user)
                     db.session.commit()
-                    flash('Profile Updated')
+                    flash('Profile Updated', 'success')
                     return redirect("/driver/updateprofile")
                 except Exception as e:
                     # return 'Profile not updated '+str(e)
-                    flash('Error occurred in updating the profile, please try again.')
+                    flash('Error occurred in updating the profile, please try again.','danger')
                     return redirect("/driver/updateprofile")
             else:
-                return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
-                                       count=get_notifications_count(),started_ride=hasStartedRide(user))
+                return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,zipcode_updated=has_zipcode_been_updated(user))
         else:
             form.email.data = user.email
             form.name.data = user.name
@@ -112,8 +91,7 @@ def update_profile():
             form.zipcode.data = user.zipcode
             form.country.data = user.country
             form.profiledescription.data = user.profile_description
-            return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
-                                   count=get_notifications_count(),started_ride=hasStartedRide(user))
+            return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,zipcode_updated=has_zipcode_been_updated(user))
 
 
 @driveblueprint.route("/uploadimage", methods=['POST'])
@@ -128,7 +106,7 @@ def upload_profile_image():
     form.surname.data = user.surname
     form.zipcode.data = user.zipcode
     form.country.data = user.country
-    form.gender.data = "Male"
+    #form.gender.data = "Male"
 
     if imageForm.validate_on_submit():
         file = imageForm.image.data
@@ -142,14 +120,13 @@ def upload_profile_image():
             user.profile_image = image
             db.session.add(user)
             db.session.commit()
-            flash('Profile image Updated')
+            flash('Profile image Updated','success')
             return redirect("/driver/updateprofile")
         except:
-            flash('Error occurred in updating the profile image, please try again.')
+            flash('Error occurred in updating the profile image, please try again.','danger')
             return redirect("/driver/updateprofile")
     else:
-        return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
-                               count=get_notifications_count(),started_ride=hasStartedRide(user))
+        return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,zipcode_updated=has_zipcode_been_updated(user))
 
 
 @driveblueprint.route("/myrides")
@@ -160,7 +137,7 @@ def my_rides():
     rides = db.engine.execute(text(
         "select *, passenger_ratings as driver_rating_for_pass from rides LEFT join users on users.id = rides.passenger_id "
         "where driver_id = " + str(user.id) + " and isConfirmed=1 and isStarted=1 and isEnded=1"))
-    return render_template("driver_my_rides.html", count=get_notifications_count(), rides=rides, user=user,started_ride=hasStartedRide(user))
+    return render_template("driver_my_rides.html",zipcode_updated=has_zipcode_been_updated(user))
 
 
 @driveblueprint.route("/notifications")
@@ -176,7 +153,7 @@ def driver_notifications():
         user.id) + " AND isStarted = 0 AND isConfirmed=0 AND isEnded=0 AND isPaid=0;")
     rides = db.engine.execute(sql)
 
-    return render_template("driver_notifications.html", rides=rides, user=user, count=get_notifications_count(),started_ride=hasStartedRide(user))
+    return render_template("driver_notifications.html", rides=rides, user=user,zipcode_updated=has_zipcode_been_updated(user))
 
 
 @driveblueprint.route("/approve/<int:request_id>")
@@ -223,7 +200,7 @@ def started_ride():
     if request.method == 'GET':
         ride = Ride.query.filter_by(driver_id=user.id, isConfirmed=1, isStarted=1, isEnded=0, isPaid=1).first()
         if not ride:
-            flash("No started ride found.")
+            flash("No started ride found.",'danger')
             return redirect("/driver")
 
         passenger = User.query.filter_by(id=ride.passenger_id).first()
@@ -231,8 +208,8 @@ def started_ride():
             return 'No started ride found'  # show alert that no such request found.
         else:
             form = RideRatingForm()
-            return render_template('driver_started_ride.html', count=get_notifications_count(), ride=ride, user=user,
-                                   passenger=passenger, form=form,started_ride=hasStartedRide(user))
+            return render_template('driver_started_ride.html', zipcode_updated=has_zipcode_been_updated(user), ride=ride, user=user,
+                                   passenger=passenger, form=form)
     elif request.method == 'POST':
         review = request.form.get('rev')
         stars = request.form.get('str')
@@ -254,3 +231,19 @@ def started_ride():
                 return '0'  # error occurred in reviewing and ending the ride. Try again.
     else:
         return 'Invalid request'
+
+
+@driveblueprint.route("/zipcode", methods=['GET', 'POST'])
+@login_required
+def update_zipcode():
+    user = current_user
+    update_user = User.query.filter_by(id=user.id).first()
+    update_user.zipcode = request.args.get('zipcode')
+    try:
+        db.session.add(update_user)
+        db.session.commit()
+        flash('Zipcode updated','success')
+        return redirect("/driver")
+    except:
+        flash('Error occurred in updating the zipcode, please try again.')
+        return redirect("/driver")

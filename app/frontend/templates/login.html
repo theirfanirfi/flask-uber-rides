@@ -4,15 +4,6 @@
         <div class="container justify-content-center">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                           {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                    <li class="alert alert-danger">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
                     <div class="apply_job_form white-bg">
                         <h4>Login</h4>
                         <form action="/login" method="post">

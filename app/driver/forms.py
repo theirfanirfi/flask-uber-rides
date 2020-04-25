@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, RadioField, TextAreaField
-from wtforms.validators import DataRequired,Email,EqualTo, Length
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField, IntegerField
+from wtforms.validators import DataRequired,Email,EqualTo, Length, Regexp
 from app.models.models import User
 from app import application
 from wtforms import ValidationError
@@ -18,7 +18,7 @@ class ProfileForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     country = StringField('Country', validators=[DataRequired()])
     zipcode = StringField('text',validators=[DataRequired()])
-    gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
+    #gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
     submit = SubmitField('Update Profile')
 
     def validate_email(self, field):
@@ -34,3 +34,7 @@ class UploadProfileImageForm(FlaskForm):
         file_path = os.path.join(folder, field.data.filename)
         if os.path.isfile(file_path):
             raise ValidationError("Image with the same name already exists.")
+
+class ZipCodeForm(FlaskForm):
+    zipcode = IntegerField('number',validators=[DataRequired(), Regexp(regex=r'^\d+$')])
+    submit = SubmitField('Update')

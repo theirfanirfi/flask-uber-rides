@@ -46,14 +46,6 @@
 
                                 <div class="col-md-12">
                                     <div class="input_field">
-                                        {{form.zipcode(placeholder='Zip code (Optional)')}}
-                                        {% if form.zipcode.errors %}
-                                        <p style="color:red;">{{ form.zipcode.errors[0] }}</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="input_field">
                                         {{form.password(placeholder='Password')}}
                                         {% if form.password.errors %}
                                         <p style="color:red;">{{ form.password.errors[0] }}</p>
@@ -68,16 +60,6 @@
                                         {% endif %}
                                     </div>
                                 </div>
-
-                                <div class="form-check-inline mx-5">
-                                  <label class="form-check-label">
-                                      <label style="font-weight:bolder;">Gender</label>
-                                      {{form.gender(class_='form-check-input')}}
-                                      {% if form.gender.errors %}
-                                       <p style="color:red;"> {{ form.driver_or_pass.errors[0] }}</p>
-                                        {% endif %}
-                                 </label>
-                                 </div>
 
                                 <div class="form-check-inline mx-5">
                                   <label class="form-check-label">

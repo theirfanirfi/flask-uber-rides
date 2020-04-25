@@ -13,19 +13,15 @@
     <!-- Place favicon.ico in the root directory -->
 
     <!-- CSS here -->
+
+
+
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/owl.carousel.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/themify-icons.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/nice-select.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/flaticon.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gijgo.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/animate.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/slicknav.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-    <!-- <link rel="stylesheet" href="css/responsive.css"> -->
     <style>
     #bootstrapnav li a {
         color:#00D363;
@@ -41,18 +37,19 @@
 
     <!-- header-start -->
     <header>
-        <div class="header-area ">
-            <div id="sticky-header" class="main-header-area">
-                <div class="container ">
-<nav class="navbar navbar-expand-sm" style="background-color:none;">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position:fixed;z-index:1;width:100%;">
+  <a class="navbar-brand" href="#">Ride</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-  <!-- Links -->
-  <ul id="bootstrapnav" class="navbar-nav">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
     <li class="nav-item">
       <a class="nav-link" href="/">Home</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#team">Team</a>
+      <a class="nav-link" href="/#team">Team</a>
     </li>
 
       {% if current_user.is_authenticated %}
@@ -73,16 +70,46 @@
       <a class="nav-link" href="/register">Don't have ID? Register</a>
     </li>
 {% endif %}
+    </ul>
 
-  </ul>
-
+  </div>
 </nav>
 
-                </div>
-            </div>
-        </div>
+
     </header>
     <!-- header-end -->
+
+    <div class="container" style="position:absolute;z-index:1;margin-top:20px;">
+<div class="row">
+<div class="col-md-6"></div>
+
+
+
+<div class="col-md-6">
+
+             {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <ul class=flashes>
+                    {% for category, message in messages %}
+<div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+ {{message}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+
+
+
+
+
+
+</div>
+</div>
+</div>
 
 {% block body %}
 
@@ -90,39 +117,18 @@
 
 {% endblock %}
 
-
-       <!-- link that opens popup -->
-    <!-- JS here -->
-    <script src="{{ url_for('static', filename='js/vendor/modernizr-3.5.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/jquery-1.12.4.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/isotope.pkgd.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/ajax-form.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/waypoints.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.counterup.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/imagesloaded.pkgd.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/scrollIt.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.scrollUp.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/nice-select.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.slicknav.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/plugins.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/gijgo.min.js') }}"></script>
 
-
-
-    <!--contact js-->
-    <script src="{{ url_for('static', filename='js/contact.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.ajaxchimp.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mail-script.js') }}"></script>
 
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 
+
+
+
 </body>
+</html>

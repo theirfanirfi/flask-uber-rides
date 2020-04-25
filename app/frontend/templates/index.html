@@ -19,43 +19,6 @@
         </div>
 
 
-
-<!-- catagory_area -->
-<div class="catagory_area">
-    <div class="container">
-        <div class="row cat_search">
-            <div class="col-lg-4 col-md-4">
-                <form action="{{url_for('passenger_bp.finddriver')}}" method="post">
-                    <div class="single_input">
-                        <!--                        <input type="location" placeholder="From">-->
-                        {{form.from_loc(placeholder='From location')}}
-                    </div>
-            </div>
-
-            <div class="col-lg-4 col-md-4">
-                <div class="single_input">
-                    {{form.to_loc(placeholder='to location')}}
-
-                </div>
-            </div>
-
-
-            <div class="col-lg-4 col-md-12">
-                <div class="job_btn">
-                    {{ form.csrf_token }}
-                    {{form.submit(class_='boxed-btn3',style='width:100%')}}
-                </div>
-            </div>
-            </form>
-        </div>
-
-    </div>
-</div>
-<!--/ catagory_area -->
-
-
-
-
     <div id="team" class="featured_candidates_area">
         <div class="container">
             <div class="row">

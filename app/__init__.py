@@ -16,7 +16,6 @@ application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/ride.db'
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #import models
 
-
 login_manager = LoginManager()
 
 login_manager.login_view = 'frontend_blue_print.login'

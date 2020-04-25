@@ -12,8 +12,7 @@ from sqlalchemy import text
 
 @fp.route('/')
 def index():
-    findform = FindDriverForm()
-    return render_template('index.html', form=findform)
+    return render_template('index.html')
 
 
 @fp.route('login', methods=['GET', 'POST'])
@@ -23,17 +22,17 @@ def login():
         if form.validate_on_submit():
             user = User.query.filter_by(email=form.email.data).first()
             if not user:
-                flash('Invalid Credentials')
+                flash('Invalid Credentials','danger')
                 return redirect("/login")
             if user.check_password(form.password.data) and user is not None:
                 login_user(user)
-                flash('You are logged in. ')
+                flash('You are logged in. ','success')
                 if user.roles == "Driver":
                     return redirect('/driver')
                 else:
                     return redirect('/passenger')
             else:
-                flash('Invalid Credentials')
+                flash('Invalid Credentials','danger')
                 return redirect("/login")
         else:
             return render_template('login.html', form=form)
@@ -46,7 +45,6 @@ def login():
 def register():
     form = RegisterationForm()
     role = "Passenger"
-    gender= ""
     if request.method == 'GET':
         return render_template('register.html',form=form)
     elif request.method == 'POST':
@@ -56,14 +54,14 @@ def register():
             else:
                 role = "Driver"
 
-            user = User(name=form.name.data,surname=form.surname.data,email=form.email.data,country=form.country.data,password=form.password.data,roles=role,gender=form.gender.data)
+            user = User(name=form.name.data,surname=form.surname.data,email=form.email.data,country=form.country.data,password=form.password.data,roles=role)
             db.session.add(user)
             try:
                 db.session.commit()
-                flash('Registeration successful, please login to continue.')
+                flash('Registeration successful, please login to continue.','success')
                 return redirect("/login")
             except:
-                flash('Error occurred during registeration. Please try again.')
+                flash('Error occurred during registeration. Please try again.','danger')
                 return redirect(request.referrer)
         else:
             # return 'not validate'

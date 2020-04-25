@@ -18,9 +18,7 @@ class RegisterationForm(FlaskForm):
     country = StringField('Country', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), EqualTo('pass_confirm', message='Password & Confirm password must match!')])
     pass_confirm = PasswordField('Confirm password', validators=[DataRequired()])
-    zipcode = StringField('text')
     driver_or_pass = RadioField('Label', choices=[('1', 'Driver'), ('0', 'Passenger')], validators=[DataRequired()])
-    gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
     submit = SubmitField('Register')
 
     def validate_email(self,field):

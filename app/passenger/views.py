@@ -21,7 +21,7 @@ PRICE = 20
 def isPassenger():
     user = current_user
     if not user.roles == "Passenger":
-        flash("You are not Driver. Please login/Register with Driver account.")
+        flash("You are not Driver. Please login/Register with Driver account.",'danger')
         return redirect("/logout")
 
 
@@ -45,7 +45,7 @@ def home():
     user = current_user
     findForm = FindDriverForm()
     if not User.is_passenger(user):
-        flash("You are not Driver. Please login/Register with Driver account.")
+        flash("You are not Driver. Please login/Register with Driver account.",'danger')
         return redirect('/logout')
     else:
         rides = db.engine.execute(text(
@@ -67,7 +67,7 @@ def finddriver():
     user = current_user
     if form.validate_on_submit():
         if not int(user.zipcode) > 0:
-            flash('please update your zipcode first')
+            flash('please update your zipcode first','warning')
             return redirect(request.referrer)
 
         drivers = db.engine.execute(text(
@@ -85,7 +85,7 @@ def finddriver():
 
 
     else:
-        flash('please provide the correct locations')
+        flash('please provide the correct locations','danger')
         return redirect(request.referrer)
 
 
@@ -153,17 +153,17 @@ def update_profile():
                 update_user.surname = form.surname.data
                 update_user.zipcode = form.zipcode.data
                 update_user.country = form.country.data
-                update_user.gender = form.gender.data
+                #update_user.gender = form.gender.data
                 update_user.email = form.email.data
                 update_user.profile_description = form.profiledescription.data
                 try:
                     db.session.add(update_user)
                     db.session.commit()
-                    flash('Profile Updated')
+                    flash('Profile Updated','success')
                     return redirect("/passenger/updateprofile")
                 except Exception as e:
                     # return 'Profile not updated '+str(e)
-                    flash('Error occurred in updating the profile, please try again.')
+                    flash('Error occurred in updating the profile, please try again.','danger')
                     return redirect("/passenger/updateprofile")
             else:
                 return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
@@ -190,7 +190,7 @@ def upload_profile_image():
     form.name.data = user.name
     form.surname.data = user.surname
     form.zipcode.data = user.zipcode
-    form.gender.data = "Male"
+    #form.gender.data = "Male"
 
     if imageForm.validate_on_submit():
         file = imageForm.image.data
@@ -204,10 +204,10 @@ def upload_profile_image():
             user.profile_image = image
             db.session.add(user)
             db.session.commit()
-            flash('Profile image Updated')
+            flash('Profile image Updated','success')
             return redirect("/passenger/updateprofile")
         except:
-            flash('Error occurred in updating the profile image, please try again.')
+            flash('Error occurred in updating the profile image, please try again.','danger')
             return redirect("/passenger/updateprofile")
     else:
         return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,
