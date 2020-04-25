@@ -143,58 +143,6 @@ def my_rides():
     return render_template("driver_my_rides.html",zipcode_updated=has_zipcode_been_updated(user))
 
 
-@driveblueprint.route("/notifications")
-@login_required
-def driver_notifications():
-    isDriver()
-    user = current_user
-    sql = text("SELECT *,rides.id as ride_id,users.id as p_id,(select count(*) from rides WHERE driver_id = " + str(
-        user.id) + " AND isStarted = 0 AND isConfirmed=0 "
-                   "AND isEnded=0 AND isPaid=0) as total_requests "
-                   "FROM rides LEFT JOIN users on users.id = rides.passenger_id "
-                   "WHERE driver_id = " + str(
-        user.id) + " AND isStarted = 0 AND isConfirmed=0 AND isEnded=0 AND isPaid=0;")
-    rides = db.engine.execute(sql)
-
-    return render_template("driver_notifications.html", rides=rides, user=user,zipcode_updated=has_zipcode_been_updated(user))
-
-
-@driveblueprint.route("/approve/<int:request_id>")
-@login_required
-def approve_request(request_id):
-    isDriver()
-    user = current_user
-    ride = Ride.query.filter_by(id=request_id, driver_id=user.id, isConfirmed=0, isStarted=0, isEnded=0).first()
-    if not ride:
-        return '2'  # show alert that no such request found.
-    else:
-        try:
-            ride.isConfirmed = 1
-            db.session.add(ride)
-            db.session.commit()
-            return "1"  # request confirmed, please wait for the passenger payment to start the ride.
-        except Exception as e:
-            return "0"  # show alert message, that an error has occurred,request cannot be confirmed. Try refreshing the page
-
-
-@driveblueprint.route("/decline/<int:request_id>")
-@login_required
-def decline_request(request_id):
-    isDriver()
-    user = current_user
-    ride = Ride.query.filter_by(id=request_id, driver_id=user.id, isConfirmed=0, isStarted=0, isEnded=0).first()
-    if not ride:
-        return '2'  # show alert that no such request found.
-    else:
-        try:
-            ride.isConfirmed = 2  # 2 means request declined
-            db.session.add(ride)
-            db.session.commit()
-            return "1"  # request declined,
-        except Exception as e:
-            return "0"  # show alert message, that an error has occurred,request cannot be declined. Try refreshing the page
-
-
 @driveblueprint.route("/started", methods=['GET', 'POST'])
 @login_required
 def started_ride():

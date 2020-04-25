@@ -16,8 +16,7 @@ class ProfileForm(FlaskForm):
     surname = StringField('text',validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     country = StringField('Country', validators=[DataRequired()])
-    zipcode = StringField('text',validators=[DataRequired()])
-    #gender = RadioField('Label', choices=[('1', 'Male'), ('0', 'Female')], validators=[DataRequired()])
+    zipcode = IntegerField('Number')
     submit = SubmitField('Update Profile')
 
     def validate_email(self, field):

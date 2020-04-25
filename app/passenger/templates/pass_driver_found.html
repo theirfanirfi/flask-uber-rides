@@ -42,16 +42,6 @@
 
             <div class="job_lists">
                 <div class="container">
-                    {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                    <li class="alert alert-danger">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
-
 
                 <div class="row">
                     {% for d in drivers %}

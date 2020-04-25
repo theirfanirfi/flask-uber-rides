@@ -143,19 +143,14 @@ def update_profile():
         return redirect('/logout')
     else:
         form = ProfileForm()
-        # form.gender.data = "Male"
-
         imageForm = UploadProfileImageForm()
         if request.method == "POST":
             if form.validate_on_submit():
                 update_user = User.query.filter_by(id=user.id).first()
                 update_user.name = form.name.data
                 update_user.surname = form.surname.data
-                update_user.zipcode = form.zipcode.data
                 update_user.country = form.country.data
-                #update_user.gender = form.gender.data
                 update_user.email = form.email.data
-                update_user.profile_description = form.profiledescription.data
                 try:
                     db.session.add(update_user)
                     db.session.commit()
@@ -173,8 +168,6 @@ def update_profile():
             form.name.data = user.name
             form.surname.data = user.surname
             form.country.data = user.country
-            form.zipcode.data = user.zipcode
-            form.profiledescription.data = user.profile_description
             return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,
                                    count=get_notifications_count())
 
@@ -189,12 +182,15 @@ def upload_profile_image():
     form.email.data = user.email
     form.name.data = user.name
     form.surname.data = user.surname
-    form.zipcode.data = user.zipcode
-    #form.gender.data = "Male"
 
     if imageForm.validate_on_submit():
         file = imageForm.image.data
         image = secure_filename(file.filename)
+        file_ext = image.split('.')[1]
+        if not (file_ext == 'jpeg' or file_ext == 'png' or file_ext == 'jpg'):
+            flash('Invalid file, only images can be uploaded','danger')
+            return redirect("/passenger/updateprofile")
+
         folder = os.path.join(application.root_path, 'static/uploads/')
         file_path = os.path.join(folder, image)
         try:
@@ -212,55 +208,6 @@ def upload_profile_image():
     else:
         return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,
                                count=get_notifications_count(), started_ride=hasStartedRide(user))
-
-
-@pb.route("/notifications")
-@login_required
-def passenger_notifications():
-    isPassenger()
-    user = current_user
-    sql = text("SELECT *,rides.id as ride_id,users.id as d_id,(select count(*) from rides WHERE passenger_id = " + str(
-        user.id) + " AND isStarted = 0 AND isConfirmed=0 "
-                   "AND isEnded=0 AND isPaid=0) as total_requests "
-                   "FROM rides LEFT JOIN users on users.id = rides.driver_id "
-                   "WHERE passenger_id = " + str(
-        user.id) + " AND isStarted = 0 AND isConfirmed=1 AND isEnded=0 AND isPaid=0;")
-    rides = db.engine.execute(sql)
-    return render_template("passenger_notifications.html", rides=rides, user=user, count=get_notifications_count(),
-                           started_ride=hasStartedRide(user))
-
-
-@pb.route("/pay/<int:ride_id>", methods=['GET', 'POST'])
-@login_required
-def pay_ride(ride_id):
-    isPassenger()
-    user = current_user
-    ride = Ride.query.filter_by(id=ride_id, passenger_id=user.id, isConfirmed=1, isStarted=0, isEnded=0).first()
-    if request.method == 'GET':
-        if not ride:
-            return 'No such ride found'  # show alert that no such request found.
-        else:
-            form = PaymentForm()
-            form.ride_id_field.data = ride.id
-            form.driver_id_field.data = ride.driver_id
-            return render_template('pass_pay.html', count=get_notifications_count(), form=form, ride=ride,
-                                   started_ride=hasStartedRide(user))
-    elif request.method == 'POST':
-        ride.isPaid = 1
-        ride.isStarted = 1
-        try:
-            db.session.add(ride)
-            db.session.commit()
-            return 'ride started'
-        except Exception as e:
-            return 'error'
-        finally:
-            decline_all_other_rides = db.engine.execute(
-                text("UPDATE rides set isConfirmed=3, isStarted=2 WHERE passenger_id = "
-                     + str(user.id) + " and isConfirmed=0 and isEnded=0 and isPaid=0 and isStarted=0;"))
-            return redirect("/passenger/started")
-    else:
-        return 'Invalid request'
 
 
 @pb.route("/started", methods=['GET', 'POST'])
