@@ -45,10 +45,12 @@ def profile():
     isDriver()
     loggedin_user= current_user
     user_id = loggedin_user.id
+    member_since = str(loggedin_user.member_since)
     total_rides = Ride.query.filter_by(driver_id=loggedin_user.id).count()
     earned = Ride.query.with_entities(func.sum(Ride.price).label('earned')).filter_by(driver_id=loggedin_user.id).all()[0][0]
     reviews = db.engine.execute(text("SELECT * from rides left join users on users.id = rides.passenger_id where driver_id = "+str(user_id)))
-    return render_template('driver_profile.html', user=loggedin_user, reviews=reviews,earned=earned,total_rides=total_rides, zipcode_updated=has_zipcode_been_updated(loggedin_user))
+    return render_template('driver_profile.html', user=loggedin_user, reviews=reviews,earned=earned,total_rides=total_rides, zipcode_updated=has_zipcode_been_updated(loggedin_user),
+                           member_since=member_since[0:10])
 
 
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])

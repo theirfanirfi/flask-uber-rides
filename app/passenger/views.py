@@ -67,9 +67,13 @@ def finddriver():
         for d in drivers:  # Get list of drivers who are at the shortest distance
             distance = abs(d.zipcode - passenger_zipcode)
             if distance == minimum:
-                closest_drivers.append(d)
+                closest_drivers.append(d.id)
 
-        return render_template('pass_driver_found.html', drivers=closest_drivers, distance=distance_in_km,
+        list = str(tuple(closest_drivers)).replace(',)', ')')
+        best_drivers = db.engine.execute(text(
+            "SELECT *, (select avg(driver_ratings) from rides where driver_id = users.id) as avg_ratings FROM users where id in %s order by avg_ratings DESC limit 1" % list))
+
+        return render_template('pass_driver_found.html', drivers=best_drivers, distance=distance_in_km,
                                price=calculated_price, form=form, from_loc=form.from_loc.data,
                                to_loc=form.to_loc.data, start_zipcode=form.from_loc.data, end_zipcode=form.to_loc.data)
 
@@ -87,10 +91,10 @@ def profile():
     isPassenger()
     user = current_user
     user_id = user.id
-
+    member_since = str(user.member_since)
     total_rides = Ride.query.filter_by(passenger_id=user_id).count()
     spent = Ride.query.with_entities(func.sum(Ride.price).label('spent')).filter_by(passenger_id=user_id).all()[0][0]
-    return render_template('passenger_profile.html', user=user, spent=spent, total_rides=total_rides)
+    return render_template('passenger_profile.html', user=user, spent=spent, total_rides=total_rides, member_since=member_since[0:10])
 
 
 @pb.route('/updateprofile', methods=['GET', 'POST'])
@@ -159,7 +163,7 @@ def upload_profile_image():
             db.session.commit()
             flash('Profile image Updated', 'success')
             return redirect("/passenger/updateprofile")
-        except:
+        except Exception as e:
             flash('Error occurred in updating the profile image, please try again.', 'danger')
             return redirect("/passenger/updateprofile")
     else:
