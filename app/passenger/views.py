@@ -69,7 +69,7 @@ def finddriver():
             if distance == minimum:
                 closest_drivers.append(d)
 
-        return render_template('pass_driver_found.html', drivers=closest_drivers[:1], distance=distance_in_km,
+        return render_template('pass_driver_found.html', drivers=closest_drivers, distance=distance_in_km,
                                price=calculated_price, form=form, from_loc=form.from_loc.data,
                                to_loc=form.to_loc.data, start_zipcode=form.from_loc.data, end_zipcode=form.to_loc.data)
 

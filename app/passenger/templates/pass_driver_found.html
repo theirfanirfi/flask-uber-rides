@@ -44,6 +44,7 @@
                 <div class="container">
 
                 <div class="row">
+                    {% if drivers | length > 0 %}
                     {% for d in drivers %}
                     <div style="margin: 12px 4px;" class="col-lg-12 col-md-12">
                         <div class="single_jobs white-bg d-flex justify-content-between">
@@ -85,6 +86,9 @@
                         </div>
                     </div>
                     {% endfor %}
+                    {% else %}
+                    <h1>No driver found</h1>
+                    {% endif %}
                 </div>
                 </div>
             </div>
