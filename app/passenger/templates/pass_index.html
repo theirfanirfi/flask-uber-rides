@@ -5,7 +5,11 @@ Homepage
 
 
 {% block body %}
-
+<style>
+    .checked {
+    color: orange;
+    }
+</style>
 
 <!-- catagory_area -->
 <div class="catagory_area">
@@ -16,12 +20,19 @@ Homepage
                     <div class="single_input">
                         <!--                        <input type="location" placeholder="From">-->
                         {{form.from_loc(placeholder='From location')}}
+                             {% if form.from_loc.errors %}
+                                <p style="color:red;"> {{ form.from_loc.errors[0] }}</p>
+                                {% endif %}
                     </div>
             </div>
 
             <div class="col-lg-4 col-md-4">
                 <div class="single_input">
                     {{form.to_loc(placeholder='to location')}}
+
+                         {% if form.to_loc.errors %}
+                                <p style="color:red;"> {{ form.to_loc.errors[0] }}</p>
+                                {% endif %}
 
                 </div>
             </div>
@@ -84,28 +95,15 @@ Homepage
                     <p><b>Passenger:</b> {{ride.passenger_review_for_driver}}</p>
                     <div style="margin-left:6px;" class="reply-btn">
                         {% for i in range(0,5) %}
-                        {% if i+1 <= ride.pass_rating_for_driver %}
+                        {% if i+1 <= ride.driver_ratings %}
                         <span><i class="fa fa-star checked"></i></span>
                         {% else %}
                         <span><i class="fa fa-star"></i></span>
                         {% endif %}
                         {% endfor %}
-                        ({{ride.pass_rating_for_driver}})
+                        ({{ride.driver_ratings}})
 
 
-                    </div>
-                    {% endif %}
-
-                    {% if ride.isReviewedByDriver == 1 %}
-                    <p><b>Driver:</b> {{ride.driver_review_for_passenger}}</p>
-                    <div style="margin-left:6px;" class="reply-btn">
-                        {% for i in range(0,5) %}
-                        {% if i+1 <= ride.passenger_ratings %}
-                        <span><i class="fa fa-star checked"></i></span>
-                        {% else %}
-                        <span><i class="fa fa-star"></i></span>
-                        {% endif %}
-                        {% endfor %}
                     </div>
                     {% endif %}
                 </div>

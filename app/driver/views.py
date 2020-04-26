@@ -46,9 +46,9 @@ def profile():
     loggedin_user= current_user
     user_id = loggedin_user.id
     total_rides = Ride.query.filter_by(driver_id=loggedin_user.id).count()
-    spent = Ride.query.with_entities(func.sum(Ride.price).label('spent')).filter_by(driver_id=loggedin_user.id).all()
-    reviews = db.session.query(Ride).join(User, User.id == Ride.driver_id).all()
-    return render_template('driver_profile.html', user=loggedin_user, reviews=reviews, zipcode_updated=has_zipcode_been_updated(loggedin_user))
+    earned = Ride.query.with_entities(func.sum(Ride.price).label('earned')).filter_by(driver_id=loggedin_user.id).all()[0][0]
+    reviews = db.engine.execute(text("SELECT * from rides left join users on users.id = rides.passenger_id where driver_id = "+str(user_id)))
+    return render_template('driver_profile.html', user=loggedin_user, reviews=reviews,earned=earned,total_rides=total_rides, zipcode_updated=has_zipcode_been_updated(loggedin_user))
 
 
 @driveblueprint.route('/updateprofile', methods=['GET', 'POST'])
@@ -137,10 +137,8 @@ def upload_profile_image():
 def my_rides():
     isDriver()
     user = current_user
-    rides = db.engine.execute(text(
-        "select *, passenger_ratings as driver_rating_for_pass from rides LEFT join users on users.id = rides.passenger_id "
-        "where driver_id = " + str(user.id) + " and isConfirmed=1 and isStarted=1 and isEnded=1"))
-    return render_template("driver_my_rides.html",zipcode_updated=has_zipcode_been_updated(user))
+    rides =  db.engine.execute(text("SELECT * from rides left join users on users.id = rides.passenger_id where driver_id = "+str(user.id)))
+    return render_template("driver_my_rides.html", rides=rides, zipcode_updated=has_zipcode_been_updated(user), user=user)
 
 
 @driveblueprint.route("/started", methods=['GET', 'POST'])

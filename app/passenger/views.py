@@ -1,7 +1,8 @@
 from flask import Blueprint, redirect, render_template, request, flash
-from flask_login import login_required, current_user, confirm_login
+from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-from sqlalchemy import text
+from sqlalchemy import text, func
+
 
 pb = Blueprint('passenger_bp', __name__,
                template_folder='templates',
@@ -14,6 +15,7 @@ from app.driver.forms import *
 from random import randint
 from app.models.models import *
 from app import db
+import sys
 
 PRICE = 20
 
@@ -21,22 +23,8 @@ PRICE = 20
 def isPassenger():
     user = current_user
     if not user.roles == "Passenger":
-        flash("You are not Driver. Please login/Register with Driver account.",'danger')
+        flash("You are not Driver. Please login/Register with Driver account.", 'danger')
         return redirect("/logout")
-
-
-def hasStartedRide(user):
-    ride = Ride.query.filter_by(passenger_id=user.id, isConfirmed=1, isPaid=1, isEnded=0).first()
-    if ride:
-        return True
-    else:
-        return False
-
-def get_notifications_count():
-    notifications_count = db.engine.execute("select count(*) from rides where passenger_id =" + str(
-        current_user.id) + " and isConfirmed=1 and isStarted = 0 and isPaid = 0 and isEnded =0")
-    c = str(notifications_count.first()[0])
-    return c
 
 
 @pb.route('/')
@@ -45,14 +33,11 @@ def home():
     user = current_user
     findForm = FindDriverForm()
     if not User.is_passenger(user):
-        flash("You are not Driver. Please login/Register with Driver account.",'danger')
+        flash("You are not a Driver. Please login/Register with Driver account.", 'danger')
         return redirect('/logout')
     else:
-        rides = db.engine.execute(text(
-            "select *, driver_ratings as pass_rating_for_driver from rides LEFT join users on users.id = rides.driver_id "
-            "where passenger_id = " + str(user.id) + " and isConfirmed=1 and isStarted=1 and isEnded=1"))
-        return render_template('pass_index.html', user=user, form=findForm, count=get_notifications_count(),
-                               started_ride=hasStartedRide(user), rides=rides)
+        rides = db.engine.execute(text("SELECT * from rides left join users on users.id = rides.driver_id where passenger_id = "+str(user.id)))
+        return render_template('pass_index.html', user=user, form=findForm, rides=rides)
 
 
 @pb.route('find', methods=['POST'])
@@ -67,71 +52,49 @@ def finddriver():
     user = current_user
     if form.validate_on_submit():
         if not int(user.zipcode) > 0:
-            flash('please update your zipcode first','warning')
+            flash('please update your zipcode first', 'warning')
             return redirect(request.referrer)
 
-        drivers = db.engine.execute(text(
-            "select *, users.profile_image as driver_profile_image, avg(driver_ratings) as avg_ratings, rides.id as ride_id, users.id as user_driver_id,users.zipcode as driver_zipcode from users LEFT join rides on rides.driver_id = users.id where roles='Driver' and users.zipcode = " + str(
-                user.zipcode)))
+        passenger_zipcode = form.from_loc.data
+        s1 = User.query.filter(User.roles == 'Driver', User.zipcode >= form.from_loc.data)
+        s2 = User.query.filter(User.roles == 'Driver', User.zipcode <= form.to_loc.data)
+        drivers = s1.union(s2).order_by(User.zipcode.asc())
 
-        if not drivers.scalar():
-            drivers = db.engine.execute(text(
-                "select *,users.profile_image as driver_profile_image, max(driver_ratings) as top_rated, avg(driver_ratings) as avg_ratings, rides.id as ride_id, users.id as user_driver_id,users.zipcode as driver_zipcode from users LEFT join rides on rides.driver_id = users.id where roles='Driver' and users.zipcode > 0 order by top_rated"))
+        closest_drivers = []
+        minimum = sys.maxsize  # Largest possible integer in Python
 
-        return render_template('pass_driver_found.html', drivers=drivers, distance=distance_in_km,
+        for d in drivers:  # Finds the shortest distance
+            distance = abs(d.zipcode - passenger_zipcode)
+            if distance < minimum:
+                minimum = distance
+
+        for d in drivers:  # Get list of drivers who are at the shortest distance
+            distance = abs(d.zipcode - passenger_zipcode)
+            if distance == minimum:
+                closest_drivers.append(d)
+
+        return render_template('pass_driver_found.html', drivers=closest_drivers, distance=distance_in_km,
                                price=calculated_price, form=form, from_loc=form.from_loc.data,
-                               to_loc=form.to_loc.data, count=get_notifications_count(),
-                               started_ride=hasStartedRide(user))
+                               to_loc=form.to_loc.data, start_zipcode=form.from_loc.data, end_zipcode=form.to_loc.data)
 
 
     else:
-        flash('please provide the correct locations','danger')
-        return redirect(request.referrer)
+        return render_template('pass_index.html', form=form)
 
 
 # return render_template('pass_driver_found.html')
-
-@pb.route('sendbookingreq/<int:driver_id>', methods=['GET', 'POST'])
-@login_required
-def send_booking_request(driver_id):
-    isPassenger()
-    from_loc = request.args.get('from_loc')
-    to_loc = request.args.get('to_loc')
-    price = request.args.get('price')
-    distance = request.args.get('distance')
-    ride = Ride(driver_id=driver_id, passenger_id=current_user.id, zipcode=current_user.zipcode
-                , from_locaton=from_loc, to_location=to_loc, price=price, distance=distance)
-    try:
-        db.session.add(ride)
-        db.session.commit()
-        return "1"
-    except Exception as e:
-        return "0"
 
 
 @pb.route('/profile')
 @login_required
 def profile():
     isPassenger()
-    user_loggedin = current_user
-    user_id = user_loggedin.id
-    sql = text(" select *,"
-               "(select count(*) from rides where passenger_id = " + str(user_id) + " and isEnded=1) as total_rides,"
-                                                                                    "(select sum(price) from rides where passenger_id = " + str(
-        user_id) + ") as total_spent "
-                   "from users "
-                   "LEFT JOIN rides on users.id = rides.passenger_id "
-                   "WHERE users.id = " + str(user_id) + ";")
+    user = current_user
+    user_id = user.id
 
-    user = db.engine.execute(sql)
-    u = user.first()
-
-    reviewsFetchSql = text(
-        "select *,reviewer.name as reviewer_name from rides LEFT join users as reviewer on reviewer.id = rides.driver_id "
-        "where rides.passenger_id = " + str(user_id) + ";")
-    reviews = db.engine.execute(reviewsFetchSql)
-    return render_template('passenger_profile.html', user=u, reviews=reviews, count=get_notifications_count(),
-                           started_ride=hasStartedRide(user_loggedin))
+    total_rides = Ride.query.filter_by(passenger_id=user_id).count()
+    spent = Ride.query.with_entities(func.sum(Ride.price).label('spent')).filter_by(passenger_id=user_id).all()[0][0]
+    return render_template('passenger_profile.html', user=user, spent=spent, total_rides=total_rides)
 
 
 @pb.route('/updateprofile', methods=['GET', 'POST'])
@@ -154,22 +117,20 @@ def update_profile():
                 try:
                     db.session.add(update_user)
                     db.session.commit()
-                    flash('Profile Updated','success')
+                    flash('Profile Updated', 'success')
                     return redirect("/passenger/updateprofile")
                 except Exception as e:
                     # return 'Profile not updated '+str(e)
-                    flash('Error occurred in updating the profile, please try again.','danger')
+                    flash('Error occurred in updating the profile, please try again.', 'danger')
                     return redirect("/passenger/updateprofile")
             else:
-                return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user,
-                                       count=get_notifications_count(), started_ride=hasStartedRide(user))
+                return render_template('driver_profile_update.html', form=form, imageForm=imageForm, user=user)
         else:
             form.email.data = user.email
             form.name.data = user.name
             form.surname.data = user.surname
             form.country.data = user.country
-            return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,
-                                   count=get_notifications_count())
+            return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user)
 
 
 @pb.route("/uploadimage", methods=['POST'])
@@ -188,7 +149,7 @@ def upload_profile_image():
         image = secure_filename(file.filename)
         file_ext = image.split('.')[1]
         if not (file_ext == 'jpeg' or file_ext == 'png' or file_ext == 'jpg'):
-            flash('Invalid file, only images can be uploaded','danger')
+            flash('Invalid file, only images can be uploaded', 'danger')
             return redirect("/passenger/updateprofile")
 
         folder = os.path.join(application.root_path, 'static/uploads/')
@@ -200,14 +161,13 @@ def upload_profile_image():
             user.profile_image = image
             db.session.add(user)
             db.session.commit()
-            flash('Profile image Updated','success')
+            flash('Profile image Updated', 'success')
             return redirect("/passenger/updateprofile")
         except:
-            flash('Error occurred in updating the profile image, please try again.','danger')
+            flash('Error occurred in updating the profile image, please try again.', 'danger')
             return redirect("/passenger/updateprofile")
     else:
-        return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user,
-                               count=get_notifications_count(), started_ride=hasStartedRide(user))
+        return render_template('passenger_profile_update.html', form=form, imageForm=imageForm, user=user)
 
 
 @pb.route("/started", methods=['GET', 'POST'])
@@ -215,33 +175,42 @@ def upload_profile_image():
 def started_ride():
     isPassenger()
     user = current_user
-    ride = Ride.query.filter_by(passenger_id=user.id, isConfirmed=1, isStarted=1, isEnded=0, isPaid=1).first()
+    form = RideRatingForm()
+    ride = Ride.query.filter_by(passenger_id=user.id, isStarted=1, isEnded=0, isPaid=1).first()
     if request.method == 'GET':
         if not ride:
-            return 'No started ride found.'
+            flash('No started ride found', 'danger')
+            return redirect(request.referrer)
         else:
             driver = User.query.filter_by(id=ride.driver_id).first()
-            form = RideRatingForm()
-            return render_template('passenger_started_ride.html', count=get_notifications_count(), ride=ride, user=user,
-                                   driver=driver, form=form, started_ride=hasStartedRide(user))
+            form.ride_id.data = ride.id
+            return render_template('passenger_started_ride.html', ride=ride, user=user,
+                                   driver=driver, form=form)
     elif request.method == 'POST':
-        review = request.form.get('rev')
-        stars = request.form.get('str')
-        ride_id = request.form.get('id')
-        ride = Ride.query.filter_by(passenger_id=user.id, id=ride_id, isConfirmed=1, isStarted=1, isPaid=1).first()
-        if not ride:
-            return "2"  # no such ride found to end
+        if form.validate_on_submit():
+            review = form.review.data
+            stars = form.stars.data
+            ride_id = form.ride_id.data
+            ride = Ride.query.filter_by(passenger_id=user.id, id=ride_id, isStarted=1, isPaid=1).first()
+            if not ride:
+                flash('No such ride found to review', 'danger')
+                return redirect(request.referrer)
+            else:
+                ride.passenger_review_for_driver = review
+                ride.driver_ratings = stars
+                ride.isEnded = 1
+                ride.isReviewedByPassenger = 1
+                try:
+                    db.session.add(ride)
+                    db.session.commit()
+                    flash('Ride ended', 'success')
+                    return redirect('/passenger')
+                except Exception as e:
+                    flash('Error occurred, please try again', 'danger')
+                    return redirect(request.referrer)
         else:
-            ride.passenger_review_for_driver = review
-            ride.driver_ratings = stars
-            ride.isEnded = 1
-            ride.isReviewedByPassenger = 1
-            try:
-                db.session.add(ride)
-                db.session.commit()
-                return '1'  # ride ended
-            except Exception as e:
-                return '0'  # error occurred in reviewing and ending the ride. Try again.
+            flash('Invalid review','danger')
+            return redirect(request.referrer)
     else:
         return 'Invalid request'
 
@@ -251,8 +220,48 @@ def started_ride():
 def my_rides():
     isPassenger()
     user = current_user
-    rides = db.engine.execute(text(
-        "select *, driver_ratings as pass_rating_for_driver from rides LEFT join users on users.id = rides.driver_id "
-        "where passenger_id = " + str(user.id) + " and isConfirmed=1 and isStarted=1 and isEnded=1"))
-    return render_template('passenger_my_rides.html', rides=rides, count=get_notifications_count(), user=user,
-                           started_ride=hasStartedRide(user))
+    rides = db.engine.execute(text("SELECT * from rides left join users on users.id = rides.driver_id where passenger_id = " + str(user.id)))
+    return render_template('passenger_my_rides.html', rides=rides, user=user, )
+
+
+@pb.route('/start', methods=['GET', 'POST'])
+@login_required
+def start_ride():
+    form = PaymentForm()
+    user = current_user
+    if request.method == "GET":
+        distance = request.args.get('distance')
+        start_zipcode = request.args.get('start_zipcode')
+        end_zipcode = request.args.get('end_zipcode')
+        if not (int(start_zipcode) >= 10121 and int(start_zipcode) <= 10156) and not (
+                int(end_zipcode) >= 10121 and int(end_zipcode) <= 10156):
+            flash('Invalid zipcodes provided.', 'danger')
+            return redirect(request.referrer)
+
+        driver_id = request.args.get('driver_id')
+        price = request.args.get('price')
+        form.start_zipcode.data = start_zipcode
+        form.end_zipcode.data = end_zipcode
+        form.driver_id_field.data = driver_id
+        form.distance_field.data = distance
+        form.payment.data = price
+        return render_template('pass_pay.html', form=form, price=price)
+    elif request.method == "POST":
+        if form.validate_on_submit():
+            ride = Ride(driver_id=form.driver_id_field.data, passenger_id=user.id, zipcode=1234,
+                        from_locaton=form.start_zipcode.data, to_location=form.end_zipcode.data,
+                        price=form.payment.data, distance=form.distance_field.data, isPaid=1, isStarted=1)
+            try:
+                db.session.add(ride)
+                db.session.commit()
+                flash('Ride started', 'success')
+                return redirect("/passenger/started")
+            except:
+                flash('Error occurred in starting the ride, please try again', 'danger')
+                return redirect(request.referrer)
+        else:
+            flash('Please fill in the form correctly.', 'danger')
+            return redirect(request.referrer)
+    else:
+        flash('Invalid request method', 'danger')
+        return redirect(request.referrer)

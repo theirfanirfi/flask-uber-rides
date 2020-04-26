@@ -35,7 +35,7 @@ Pay
                     </div>
                 </div>
                 <div class="panel-body">
-                    <form action="{{url_for('passenger_bp.pay_ride',ride_id=ride.id)}}" method="post">
+                    <form action="{{url_for('passenger_bp.start_ride')}}" method="post">
                         <div class="form-group">
                             <label>
                                 CARD NUMBER</label>
@@ -78,7 +78,10 @@ Pay
                                     {% endif %}
 
                                     {{form.driver_id_field(class_='form-control',placeholder='driver')}}
-                                    {{form.ride_id_field(class_='form-control',placeholder='ride')}}
+                                    {{form.distance_field(class_='form-control',placeholder='distance')}}
+                                    {{form.start_zipcode(class_='form-control')}}
+                                    {{form.end_zipcode(class_='form-control')}}
+                                    {{form.payment(class_='form-control')}}
 
                                 </div>
                             </div>
@@ -87,10 +90,11 @@ Pay
             </div>
             <ul class="nav nav-pills nav-stacked">
                 <li class="active"><a href="#"><span class="badge pull-right"><span
-                        class="glyphicon glyphicon-usd"></span>${{ride.price}}</span> Final Payment</a>
+                        class="glyphicon glyphicon-usd"></span>${{price}}</span> Final Payment</a>
                 </li>
             </ul>
             <br/>
+              {{ form.csrf_token }}
             {{form.submit(class_='btn btn-success btn-lg btn-block')}}
             </form>
 

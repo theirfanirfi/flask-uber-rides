@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required
 import os
+
 # from flask_cors import CORS
 
 
@@ -33,7 +34,6 @@ from app.models.models import *
 
 db.create_all()
 # Migrate(app, db)
-
 
 #
 

@@ -22,9 +22,6 @@ width: 150px;
 color:orange;
 }
 
-
-
-
 </style>
 <!-- ================ contact section start ================= -->
 <section class="contact-section section_padding">
@@ -93,30 +90,18 @@ color:orange;
                                             <p><b>Passenger:</b> {{ride.passenger_review_for_driver}}</p>
                                             <div style="margin-left:6px;" class="reply-btn">
                                                 {% for i in range(0,5) %}
-                                                {% if i+1 <= ride.pass_rating_for_driver %}
+                                                {% if i+1 <= ride.driver_ratings %}
                                                 <span><i class="fa fa-star checked"></i></span>
                                                 {% else %}
                                                 <span><i class="fa fa-star"></i></span>
                                                 {% endif %}
                                                 {% endfor %}
-                                                ({{ride.pass_rating_for_driver}})
+                                                ({{ride.driver_ratings}})
 
 
                                             </div>
                                             {% endif %}
 
-                                            {% if ride.isReviewedByDriver == 1 %}
-                                            <p><b>Driver:</b> {{ride.driver_review_for_passenger}}</p>
-                                            <div style="margin-left:6px;" class="reply-btn">
-                                                {% for i in range(0,5) %}
-                                                {% if i+1 <= ride.passenger_ratings %}
-                                                <span><i class="fa fa-star checked"></i></span>
-                                                {% else %}
-                                                <span><i class="fa fa-star"></i></span>
-                                                {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                            {% endif %}
                                         </div>
                                         <div class="col-md-4">
 

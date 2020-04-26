@@ -63,13 +63,13 @@ class Ride(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     driver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     passenger_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    zipcode = db.Column(db.Integer, nullable=False)
+    zipcode = db.Column(db.Integer, nullable=False) ###################remove
     from_loc = db.Column(db.String(150), nullable=False)
     to_loc = db.Column(db.String(150), nullable=False)
     isStarted = db.Column(db.Integer, default=0) #0: not started, 1: started, 2: responded by other driver.
     isEnded = db.Column(db.Integer, default=0) #0: not ended, 1: ended
     isPaid = db.Column(db.Integer, default=0) #0: not paid, 1: paid 
-    isConfirmed = db.Column(db.Integer, default=0) #0: request not entertained yet, 1: accepted, 2: declined, 3: repsonded by other driver. ########
+    isConfirmed = db.Column(db.Integer, default=0) #0######## remove
     # will be updated when ride ends
     passenger_ratings = db.Column(db.Integer, nullable=True)############
     # will be updated when ride ends
@@ -85,11 +85,13 @@ class Ride(db.Model):
     isReviewedByPassenger = db.Column(db.Integer, nullable=False, default=0)
     ride_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-    def __init__(self, driver_id, passenger_id, zipcode, from_locaton, to_location, price,distance):
+    def __init__(self, driver_id, passenger_id,zipcode, from_locaton, to_location, price,distance,isPaid, isStarted):
         self.driver_id = driver_id
         self.passenger_id = passenger_id
-        self.zipcode = zipcode
         self.from_loc = from_locaton
         self.to_loc = to_location
+        self.zipcode = zipcode
         self.price = price
         self.distance = distance
+        self.isPaid = isPaid
+        self.isStarted = isStarted
