@@ -51,10 +51,6 @@ def finddriver():
     drivers = ''
     user = current_user
     if form.validate_on_submit():
-        if not int(user.zipcode) > 0:
-            flash('please update your zipcode first', 'warning')
-            return redirect(request.referrer)
-
         passenger_zipcode = form.from_loc.data
         s1 = User.query.filter(User.roles == 'Driver', User.zipcode >= form.from_loc.data)
         s2 = User.query.filter(User.roles == 'Driver', User.zipcode <= form.to_loc.data)
@@ -73,7 +69,7 @@ def finddriver():
             if distance == minimum:
                 closest_drivers.append(d)
 
-        return render_template('pass_driver_found.html', drivers=closest_drivers, distance=distance_in_km,
+        return render_template('pass_driver_found.html', drivers=closest_drivers[:1], distance=distance_in_km,
                                price=calculated_price, form=form, from_loc=form.from_loc.data,
                                to_loc=form.to_loc.data, start_zipcode=form.from_loc.data, end_zipcode=form.to_loc.data)
 

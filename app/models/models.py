@@ -18,10 +18,7 @@ class User(db.Model,UserMixin):
     zipcode = db.Column(db.Integer, default=0)
     roles = db.Column(db.String(10), default="Passenger")
     profile_image = db.Column(db.String(255), nullable=True, default="0")
-    profile_description = db.Column(db.String(255), nullable=True) #############
-    isOnline = db.Column(db.Integer, nullable=False, default=0) 
     member_since = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    charges_per_kilo = db.Column(db.Integer, default=0) #only for driver ###############
     passengers = db.relationship('Ride', foreign_keys="[Ride.passenger_id]")
     drivers = db.relationship('Ride', foreign_keys="[Ride.driver_id]")
 
@@ -52,36 +49,22 @@ class User(db.Model,UserMixin):
             return False
 
 
-
-# from app.models.models import *
-# from app import db
-# new_user = User(name='Irfan', email='ii@ii.com',password='1234', zipcode='19130', isDriver=0)
-
-
 class Ride(db.Model):
     __tablename__ = "rides"
     id = db.Column(db.Integer, primary_key=True)
     driver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     passenger_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    zipcode = db.Column(db.Integer, nullable=False) ###################remove
     from_loc = db.Column(db.String(150), nullable=False)
     to_loc = db.Column(db.String(150), nullable=False)
     isStarted = db.Column(db.Integer, default=0) #0: not started, 1: started, 2: responded by other driver.
     isEnded = db.Column(db.Integer, default=0) #0: not ended, 1: ended
-    isPaid = db.Column(db.Integer, default=0) #0: not paid, 1: paid 
-    isConfirmed = db.Column(db.Integer, default=0) #0######## remove
+    isPaid = db.Column(db.Integer, default=0) #0: not paid, 1: paid
     # will be updated when ride ends
-    passenger_ratings = db.Column(db.Integer, nullable=True)############
-    # will be updated when ride ends
-    driver_ratings = db.Column(db.Integer, nullable=True) ##########
-    passenger_ratings = db.Column(db.Integer, default=0)
+    driver_ratings = db.Column(db.Integer, nullable=True)
     distance = db.Column(db.Integer, default=0)
-    driver_review_for_passenger = db.Column(
-        db.String(255), nullable=True)  # will be updated when ride ends ############
     passenger_review_for_driver = db.Column(
         db.String(255), nullable=True)  # will be updated when ride ends
     price = db.Column(db.Integer, nullable=False)
-    isReviewedByDriver = db.Column(db.Integer, nullable=False, default=0)#####################
     isReviewedByPassenger = db.Column(db.Integer, nullable=False, default=0)
     ride_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 

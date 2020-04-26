@@ -186,6 +186,13 @@ def started_ride():
 @login_required
 def update_zipcode():
     user = current_user
+    zipcode = int(request.args.get('zipcode'))
+
+    if not zipcode in range(10121, 10157):
+        flash('','zipcode')
+        flash('Invalid zipcode, the zipcode range is: [10121 - 10156] ','danger')
+        return redirect(request.referrer)
+
     update_user = User.query.filter_by(id=user.id).first()
     update_user.zipcode = request.args.get('zipcode')
     try:
